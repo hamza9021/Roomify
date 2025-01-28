@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import { useNavigate, Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 
@@ -64,9 +64,7 @@ const Register = () => {
                 },
             });
             toast.success(`${response.data.message}`);
-            setTimeout(() => {
-                navigate("/");
-            }, 500);
+            navigate("/login");
         } catch (error) {
             toast.error(error.message);
         }
@@ -205,8 +203,16 @@ const Register = () => {
                         "Register"
                     )}
                 </button>
+                <p className="mt-6 text-center text-sm text-gray-500">
+                    Already have an account?{" "}
+                    <Link
+                        to={"/login"}
+                        className="text-red-500 hover:underline"
+                    >
+                        Login
+                    </Link>
+                </p>
             </form>
-            <Toaster position="bottom-right" reverseOrder={false} />
         </div>
     );
 };
