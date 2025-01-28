@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+import { ClipLoader } from "react-spinners";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const Register = () => {
         profileImage: null,
     });
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (event) => {
         const { name, value, type, files } = event.target;
@@ -24,6 +26,7 @@ const Register = () => {
 
     const handleFormData = async (event) => {
         event.preventDefault();
+        setLoading(true);
         const { name, email, phoneNumber, password, profileImage, roles } =
             formData;
 
@@ -36,11 +39,13 @@ const Register = () => {
             !roles
         ) {
             toast.error("Please fill all the fields.");
+            setLoading(false);
             return;
         }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
             toast.error("Invalid email format.");
+            setLoading(false);
             return;
         }
 
@@ -65,6 +70,7 @@ const Register = () => {
         } catch (error) {
             toast.error(error.message);
         }
+        setLoading(false);
     };
 
     return (
@@ -187,7 +193,17 @@ const Register = () => {
                     type="submit"
                     className="mt-6 w-full bg-[#FF5A5F] hover:bg-[#e04a4f] text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF5A5F]"
                 >
-                    Register
+                    {loading ? (
+                        <div className="flex justify-center items-center">
+                            <ClipLoader
+                                color="white"
+                                size={25}
+                                loading={loading}
+                            />
+                        </div>
+                    ) : (
+                        "Register"
+                    )}
                 </button>
             </form>
             <Toaster position="bottom-right" reverseOrder={false} />
