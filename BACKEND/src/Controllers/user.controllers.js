@@ -3,6 +3,7 @@ import { ApiError } from "../Utils/ApiError.js";
 import { uploadOnCloudinary } from "../Services/cloudinary.js";
 import { ApiResponse } from "../Utils/ApiResponse.js";
 import { User } from "../Models/user.models.js";
+import { generateAccessAndRefreshToken } from "../Utils/generateAccessAndRefreshToken.js";
 
 const registerUser = wrapperFunction(async (req, res) => {
     const { name, email, password, phoneNumber, roles } = req.body;
@@ -49,4 +50,38 @@ const registerUser = wrapperFunction(async (req, res) => {
         .json(new ApiResponse(200, createdUser, "User Created Successfully"));
 });
 
-export { registerUser };
+const loginUser = wrapperFunction(async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        throw new ApiError(400, "Please fill all the fields");
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new ApiError(404, "User Not Found");
+    }
+
+    if (!(await user.isPasswordMatch(password))) {
+        throw new ApiError(401, "Incorrect Password");
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+        user._id
+    );
+    const updateUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    );
+
+    const cookieOptions = {
+        httpOnly: true,
+        secure: true,
+    };
+
+    return res
+        .cookie("accessToken", accessToken, cookieOptions)
+        .cookie("refreshToken", refreshToken, cookieOptions)
+        .status(200)
+        .json(new ApiResponse(200, updateUser, "User Logged In Successfully"));
+});
+export { registerUser, loginUser };
