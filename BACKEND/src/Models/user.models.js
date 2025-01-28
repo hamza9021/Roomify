@@ -40,6 +40,7 @@ const userSchema = new mongoose.Schema(
         roles: {
             type: String,
             enum: ["User", "Host"],
+            required: true,
         },
         refreshToken: {
             type: String,
@@ -79,6 +80,5 @@ userSchema.methods.generateAccessToken = function () {
         { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
     );
 };
-
 
 export const User = mongoose.model("User", userSchema);
