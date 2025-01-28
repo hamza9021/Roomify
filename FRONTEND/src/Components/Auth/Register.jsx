@@ -9,6 +9,7 @@ const Register = () => {
         email: "",
         phoneNumber: "",
         password: "",
+        roles: "",
         profileImage: null,
     });
     const navigate = useNavigate();
@@ -57,10 +58,10 @@ const Register = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success(response.data.message);
+            toast.success(`${response.data.message}`);
             setTimeout(() => {
                 navigate("/");
-            }, 1000);
+            }, 500);
         } catch (error) {
             toast.error(error.message);
         }
@@ -154,29 +155,31 @@ const Register = () => {
                 <div className="mt-4 mb-2">
                     <label
                         htmlFor="roles"
-                        className="block text-gray-800 text-sm font-semibold"
+                        className="block text-gray-800 text-sm font-semibold mb-3"
                     >
                         Roles
                     </label>
-                    <div className="flex items-center">
-                        <input
-                            type="radio"
-                            name="roles"
-                            value="User"
-                            className="mr-2"
-                            onChange={handleChange}
-                        />
-                        <span className="text-gray-700 text-sm">User</span>
-                    </div>
-                    <div className="flex items-center">
-                        <input
-                            type="radio"
-                            name="roles"
-                            value="Host"
-                            className="mr-2"
-                            onChange={handleChange}
-                        />
-                        <span className="text-gray-700 text-sm">Host</span>
+                    <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="radio"
+                                name="roles"
+                                value="User"
+                                className="w-4 h-4 text-[#FF5A5F] focus:ring-[#FF5A5F] border-gray-300"
+                                onChange={handleChange}
+                            />
+                            <span className="text-gray-700 text-sm">User</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="radio"
+                                name="roles"
+                                value="Host"
+                                className="w-4 h-4 text-[#FF5A5F] focus:ring-[#FF5A5F] border-gray-300"
+                                onChange={handleChange}
+                            />
+                            <span className="text-gray-700 text-sm">Host</span>
+                        </div>
                     </div>
                 </div>
 
