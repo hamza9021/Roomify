@@ -1,6 +1,6 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Home, Register, Login } from "./Components";
+import { Home, Register, Login, Logout } from "./Components";
 import { Toaster } from "react-hot-toast";
 
 const appRouter = createBrowserRouter([
@@ -15,6 +15,10 @@ const appRouter = createBrowserRouter([
     {
         path: "/login",
         element: <Login />,
+    },
+    {
+        path: "/logout",
+        element: <Logout />,
     },
 ]);
 

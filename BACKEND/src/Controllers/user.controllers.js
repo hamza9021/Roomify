@@ -84,4 +84,19 @@ const loginUser = wrapperFunction(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, updateUser, "User Logged In Successfully"));
 });
-export { registerUser, loginUser };
+
+const logoutUser = wrapperFunction(async (req, res) => {
+    await User.findByIdAndUpdate(
+        req.user._id,
+        { $set: { refreshToken: undefined } },
+        { new: true }
+    );
+
+    const cookieOptions = { httpOnly: true, secure: true };
+    res.status(200)
+        .clearCookie("accessToken", cookieOptions)
+        .clearCookie("refreshToken", cookieOptions)
+        .json(new ApiResponse(200, {}, "Logout Successfully"));
+});
+
+export { registerUser, loginUser, logoutUser };
