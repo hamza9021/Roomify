@@ -99,4 +99,103 @@ const logoutUser = wrapperFunction(async (req, res) => {
         .json(new ApiResponse(200, {}, "Logout Successfully"));
 });
 
-export { registerUser, loginUser, logoutUser };
+const getUserProfile = wrapperFunction(async (req, res) => {
+    const user = await User.findById(req.user._id).select(
+        "-password -refreshToken"
+    );
+    if (!user) {
+        throw new ApiError(404, "User Not Found");
+    }
+    return res.status(200).json(new ApiResponse(200, user, "User Profile"));
+});
+
+const updateUserProfile = wrapperFunction(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        throw new ApiError(404, "You are not authorized to update this user");
+    }
+
+    const { name, email, phoneNumber, bio, roles } = req.body;
+    if (!name && !email && !phoneNumber && !bio && !roles) {
+        throw new ApiError(400, "Please fill any one field");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { $set: req.body },
+        { new: true },
+        { validateBeforeSave: false }
+    ).select("-password -refreshToken");
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                updatedUser,
+                "User Profile Updated Successfully"
+            )
+        );
+});
+
+const updatePassword = wrapperFunction(async (req, res) => {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        throw new ApiError(400, "Please fill all the fields");
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        throw new ApiError(404, "You are not authorized to update this user");
+    }
+
+    if (!(await user.isPasswordMatch(currentPassword))) {
+        throw new ApiError(401, "Incorrect Password");
+    }
+
+    if (newPassword !== confirmPassword) {
+        throw new ApiError(400, "Password and Confirm Password should be same");
+    }
+
+    user.password = newPassword;
+    await user.save({ validateBeforeSave: false });
+
+    res.status(200).json(
+        new ApiResponse(200, {}, "Password Updated Successfully")
+    );
+});
+
+const updateprofileImage = wrapperFunction(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        throw new ApiError(404, "You are not authorized to update this user");
+    }
+    const profileImageLocalPath = await req.files?.profileImage?.[0]?.path;
+    if (!profileImageLocalPath) {
+        throw new ApiError(400, "Profile Image Should Be Required");
+    }
+    const profileImage = await uploadOnCloudinary(profileImageLocalPath);
+    if (!profileImage) {
+        throw new ApiError(400, "Profile Image is not uploaded on cloud");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { profileImage: profileImage.url },
+        { new: true, validateBeforeSave: false }
+    ).select("-password -refreshToken");
+
+    res.status(200).json(
+        new ApiResponse(200, updatedUser, "Profile Image Updated Successfully")
+    );
+});
+
+export {
+    registerUser,
+    loginUser,
+    logoutUser,
+    getUserProfile,
+    updateUserProfile,
+    updatePassword,
+    updateprofileImage,
+};
