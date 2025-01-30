@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { useNavigate, Link } from "react-router-dom";
+import { HiMail, HiLockClosed } from "react-icons/hi";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -11,7 +12,6 @@ const Login = () => {
     });
 
     const [loading, setLoading] = useState(false);
-
     const navigate = useNavigate();
 
     const handleChange = (event) => {
@@ -38,83 +38,79 @@ const Login = () => {
                 password,
             });
             toast.success(response.data.message);
-            setTimeout(() => {
-                navigate("/");
-            }, 500);
             navigate("/");
         } catch (error) {
-            toast.error(`${error.message}`);
+            toast.error(error.message);
         }
         setLoading(false);
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-50">
-            <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
-                <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-                    Login
-                </h1>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+            <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                        Welcome Back
+                    </h1>
+                    <p className="text-gray-600">Sign in to your account</p>
+                </div>
+
                 <form onSubmit={handleFormData} className="space-y-6">
-                    <div>
-                        <label
-                            htmlFor="email"
-                            className="block text-sm font-medium text-gray-700"
-                        >
-                            Email
-                        </label>
+                    <div className="relative">
+                        <HiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input
                             type="email"
-                            id="email"
+                            placeholder="Email Address"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="Enter your email"
-                            className="w-full px-4 py-2 mt-1 text-gray-800 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+                            className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 focus:border-[#FF5A5F] focus:ring-1 focus:ring-[#FF5A5F] transition-all placeholder-gray-400"
                         />
                     </div>
-                    <div>
-                        <label
-                            htmlFor="password"
-                            className="block text-sm font-medium text-gray-700"
-                        >
-                            Password
-                        </label>
+
+                    <div className="relative">
+                        <HiLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input
                             type="password"
-                            id="password"
+                            placeholder="Password"
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
-                            placeholder="Enter your password"
-                            className="w-full px-4 py-2 mt-1 text-gray-800 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+                            className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 focus:border-[#FF5A5F] focus:ring-1 focus:ring-[#FF5A5F] transition-all placeholder-gray-400"
                         />
                     </div>
+
+                    <div className="flex justify-end">
+                        <Link
+                            to="/forgot-password"
+                            className="text-sm text-[#FF5A5F] hover:text-[#E54B50] transition-colors"
+                        >
+                            Forgot Password?
+                        </Link>
+                    </div>
+
                     <button
                         type="submit"
-                        className="w-full py-2 px-4 text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                        disabled={loading}
+                        className="w-full bg-[#FF5A5F] hover:bg-[#E54B50] text-white py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                     >
                         {loading ? (
-                            <div className="flex justify-center items-center">
-                                <ClipLoader
-                                    color="white"
-                                    size={25}
-                                    loading={loading}
-                                />
-                            </div>
+                            <ClipLoader color="white" size={25} />
                         ) : (
-                            "Login"
+                            "Sign In"
                         )}
                     </button>
+
+                    <p className="text-center text-gray-600">
+                        Don't have an account?{" "}
+                        <Link
+                            to="/register"
+                            className="font-semibold text-[#FF5A5F] hover:text-[#E54B50] transition-colors"
+                        >
+                            Register
+                        </Link>
+                    </p>
                 </form>
-                <p className="mt-6 text-center text-sm text-gray-500">
-                    Don't have an account?{" "}
-                    <Link
-                        to={"/register"}
-                        className="text-red-500 hover:underline"
-                    >
-                        Register
-                    </Link>
-                </p>
             </div>
         </div>
     );
