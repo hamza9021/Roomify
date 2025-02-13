@@ -10,18 +10,18 @@ import {
 } from "../Controllers/user.controllers.js";
 import { upload } from "../Middlewares/multer.js";
 import { verifyJWT } from "../Middlewares/auth.middleware.js";
-const router = Router();
+const userRouter = Router();
 
-router
+userRouter
     .route("/register")
     .post(upload.fields([{ name: "profileImage", maxCount: 1 }]), registerUser);
 
-router.route("/login").post(loginUser);
-router.route("/logout").post(verifyJWT, logoutUser);
-router.route("/get/profile").get(verifyJWT, getUserProfile);
-router.route("/update/profile").patch(verifyJWT, updateUserProfile);
-router.route("/update/password").patch(verifyJWT, updatePassword);
-router
+    userRouter.route("/login").post(loginUser);
+    userRouter.route("/logout").post(verifyJWT, logoutUser);
+    userRouter.route("/get/profile").get(verifyJWT, getUserProfile);
+    userRouter.route("/update/profile").patch(verifyJWT, updateUserProfile);
+    userRouter.route("/update/password").patch(verifyJWT, updatePassword);
+    userRouter
     .route("/update/profile/image")
     .patch(
         verifyJWT,
@@ -29,4 +29,4 @@ router
         updateprofileImage
     );
 
-export { router };
+export { userRouter };
