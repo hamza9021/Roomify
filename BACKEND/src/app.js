@@ -5,6 +5,7 @@ const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { userRouter } from "./Routes/user.routes.js";
+import { listingRouter } from "./Routes/listing.routes.js";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "20kb" }));
@@ -14,6 +15,6 @@ app.use(express.static("./public"));
 
 //ROUTES
 app.use("/api/v1/users", userRouter);
-
+app.use("/api/v1/listings", listingRouter);
 
 export { app };

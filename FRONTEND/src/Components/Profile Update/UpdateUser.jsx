@@ -3,8 +3,10 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 import { HiUser, HiHome, HiLockClosed, HiCamera } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
 const UpdateUser = () => {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [secruityBtn, setSecruityBtn] = useState(false);
     const [updateBtn, setUpdateBtn] = useState(true);
@@ -115,7 +117,8 @@ const UpdateUser = () => {
             setUpdateUser(response.data.data);
             setProfileImage(response.data.data.profileImage);
         } catch (error) {
-            toast.error("Failed to load user data");
+            navigate("/login");
+            toast.error("Uauthorized Access");
         }
     };
 
