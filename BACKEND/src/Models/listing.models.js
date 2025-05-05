@@ -4,16 +4,13 @@ const listingSchema = new mongoose.Schema(
     {
         title: {
             type: String,
-            required: true,
         },
         description: {
             type: String,
-            required: true,
         },
         placeType: {
             type: String,
             enum: ["Entire Place", "Private Room", "Shared Room"],
-            required: true,
         },
         host: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         location: {
@@ -29,7 +26,6 @@ const listingSchema = new mongoose.Schema(
         },
         pricePerNight: {
             type: Number,
-            required: true,
             min: 20,
         },
         maxGuests: Number,
@@ -37,7 +33,10 @@ const listingSchema = new mongoose.Schema(
         beds: Number,
         bathrooms: Number,
         amenities: [String],
-        photos: [{ name: { type: String }, image: { type: String } }],
+        photos: {
+            type: [String],
+            max: 8,
+        },
         unavailableDates: [
             {
                 startDate: Date,

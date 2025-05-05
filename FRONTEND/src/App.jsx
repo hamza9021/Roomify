@@ -1,6 +1,14 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Home, Register, Login, Logout, UpdateUser } from "./Components";
+import {
+    Home,
+    Register,
+    Login,
+    Logout,
+    UpdateUser,
+    CreateListing,
+    ListingDetail,
+} from "./Components";
 import { Toaster } from "react-hot-toast";
 
 const appRouter = createBrowserRouter([
@@ -23,6 +31,14 @@ const appRouter = createBrowserRouter([
     {
         path: "/u/update",
         element: <UpdateUser />,
+    },
+    {
+        path: "/create/listing",
+        element: <CreateListing />,
+    },
+    {
+        path: "/listing/:id",
+        element: <ListingDetail />,
     },
 ]);
 

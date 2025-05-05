@@ -24,7 +24,6 @@ const UpdateUser = () => {
     });
     const [profileImage, setProfileImage] = useState(null);
 
-    // Toggle between profile and security sections
     const handleSectionToggle = (section) => {
         setSecruityBtn(section === "security");
         setUpdateBtn(section === "profile");

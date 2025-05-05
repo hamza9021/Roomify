@@ -3,5 +3,15 @@ import Register from "./Auth/Register.jsx";
 import Login from "./Auth/Login.jsx";
 import Logout from "./Auth/Logout.jsx";
 import UpdateUser from "./Profile Update/UpdateUser.jsx";
+import CreateListing from "./Listings/CreateListing.jsx";
+import ListingDetail from "./Profile Update/ListingDetail.jsx";
 
-export { Home, Register, Login, Logout, UpdateUser };
+export {
+    Home,
+    Register,
+    Login,
+    Logout,
+    UpdateUser,
+    CreateListing,
+    ListingDetail,
+};
