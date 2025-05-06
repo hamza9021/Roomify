@@ -40,11 +40,9 @@ const createListing = wrapperFunction(async (req, res) => {
     //     throw new ApiError(400, "Missing required fields");
     // }
 
-
     console.log(req.body);
     const photos = [];
     console.log(req.files);
-
 
     if (!req.files || !req.files.photos || req.files.photos.length === 0) {
         throw new ApiError(400, "At least one image is required");
@@ -52,23 +50,18 @@ const createListing = wrapperFunction(async (req, res) => {
     for (const file of req.files.photos) {
         const localPath = file.path;
 
-    
         if (!localPath) {
             throw new ApiError(400, "Image path not found");
         }
-    
-    
+
         const uploadedImage = await uploadOnCloudinary(localPath);
-    
+
         if (!uploadedImage || !uploadedImage.secure_url) {
             throw new ApiError(400, "Image upload failed");
         }
-    
-    
+
         photos.push(uploadedImage.url);
     }
-    
-    
 
     console.log("Uploaded Photos:", photos);
     const listing = await Listing.create({
@@ -217,20 +210,27 @@ const getAllListings = wrapperFunction(async (req, res) => {
         .json(new ApiResponse(200, listings, "Listings found"));
 });
 
+const getListing = wrapperFunction(async (req, res) => {
+    const { id } = req.params;
 
-const getListing = wrapperFunction(async(req,res)=>{
-    const {id} = req.params;
+    if (!id) {
+        throw new ApiError(400, "URL parameter missing");
+    }
 
-    if(!id){
-        throw new ApiError(400,"URL parameter missing");
+    const listing = await Listing.findById(id)
+        .populate("host", "name email profileImage phoneNumber bio")
+        .populate({
+            path: "reviews",
+            populate: {
+                path: "user",
+                select: "name profileImage",
+            },
+        });
+    if (!listing) {
+        throw new ApiError(404, "Listing not found");
     }
-    
-    const listing = await Listing.findById(id).populate("host","name email profileImage phoneNumber bio" );
-    if(!listing){
-        throw new ApiError(404,"Listing not found");
-    }
-    return res.status(200).json(new ApiResponse(200,listing,"Listing found"));
-})
+    return res.status(200).json(new ApiResponse(200, listing, "Listing found"));
+});
 
 export {
     createListing,

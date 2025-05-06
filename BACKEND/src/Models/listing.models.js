@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Review } from "./review.models.js";
 
 const listingSchema = new mongoose.Schema(
     {
@@ -130,5 +131,11 @@ const listingSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+listingSchema.post("findOneAndDelete", async function (data) {
+    if (data) {
+        await Review.deleteMany({ _id: { $in: data.reviews } });
+    }
+});
 
 export const Listing = mongoose.model("Listing", listingSchema);
