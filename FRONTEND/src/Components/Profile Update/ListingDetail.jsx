@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import * as maptilersdk from "@maptiler/sdk";
 import Rating from "@mui/material/Rating";
-import Stack from "@mui/material/Stack";
 import { ClipLoader } from "react-spinners";
 
 // Icons
@@ -24,14 +23,37 @@ import { GiWoodenChair } from "react-icons/gi";
 import { CiWifiOn } from "react-icons/ci";
 
 const ListingDetail = () => {
+  // State management
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [rating, setRating] = useState(2);
   const [comment, setComment] = useState("");
+  const [user, setUser] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null); // Track which review has delete confirmation open
+  
+  // Router and refs
   const { id } = useParams();
   const mapContainer = useRef(null);
   const map = useRef(null);
+
+  // ======================
+  //  Data Fetching Effects
+  // ======================
+
+  // Fetch current user profile
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get('/api/v1/users/get/profile');
+        setUser(response.data.data);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+    
+    fetchCurrentUser();
+  }, []);
 
   // Fetch listing data
   useEffect(() => {
@@ -54,7 +76,10 @@ const ListingDetail = () => {
     fetchListing();
   }, [id]);
 
-  // Initialize map
+  // ======================
+  //  Map Initialization
+  // ======================
+
   useEffect(() => {
     if (map.current || !listing) return;
 
@@ -81,6 +106,10 @@ const ListingDetail = () => {
     };
   }, [listing]);
 
+  // ======================
+  //  Review Handlers
+  // ======================
+
   const handleReviewSubmit = async () => {
     if (!comment.trim()) {
       toast.error("Please enter a comment");
@@ -97,7 +126,7 @@ const ListingDetail = () => {
         toast.success("Review submitted successfully");
         setComment("");
         setRating(2);
-        // Optionally refresh the listing data to show the new review
+        // Refresh listing to show new review
         const updatedListing = await axios.get(`/api/v1/listings/${id}`);
         setListing(updatedListing.data.data);
       }
@@ -108,36 +137,42 @@ const ListingDetail = () => {
     }
   };
 
+  const handleDeleteReview = async (reviewId) => {
+    setReviewLoading(true);
+    try {
+      await axios.delete(`/api/v1/reviews/${id}/${reviewId}/delete-review`);
+      toast.success('Review deleted successfully');
+      // Refresh listing to reflect deletion
+      const updatedListing = await axios.get(`/api/v1/listings/${id}`);
+      setListing(updatedListing.data.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setReviewLoading(false);
+      setShowDeleteConfirm(null); // Close confirmation dialog
+    }
+  };
+
+  // ======================
+  //  UI Helper Functions
+  // ======================
+
   const getAmenityIcon = (amenity) => {
     switch (amenity) {
-      case "toilet_paper":
-        return <FiDroplet className="text-xl text-airbnb-pink" />;
-      case "soap":
-        return <FiUmbrella className="text-xl text-airbnb-pink" />;
-      case "towels":
-        return <FiUser className="text-xl text-airbnb-pink" />;
-      case "pillows":
-        return <FiPocket className="text-xl text-airbnb-pink" />;
-      case "linens":
-        return <GiWoodenChair className="text-xl text-airbnb-pink" />;
-      case "wifi":
-        return <CiWifiOn className="text-xl text-airbnb-pink" />;
-      case "kitchen":
-        return <MdKitchen className="text-xl text-airbnb-pink" />;
-      case "parking":
-        return <MdLocalParking className="text-xl text-airbnb-pink" />;
-      case "pool":
-        return <MdPool className="text-xl text-airbnb-pink" />;
-      case "tv":
-        return <FiTv className="text-xl text-airbnb-pink" />;
-      case "air_conditioning":
-        return <FiThermometer className="text-xl text-airbnb-pink" />;
-      case "smoke_alarm":
-        return <FiAlertTriangle className="text-xl text-airbnb-pink" />;
-      case "first_aid":
-        return <FiPlusSquare className="text-xl text-airbnb-pink" />;
-      default:
-        return null;
+      case "toilet_paper": return <FiDroplet className="text-xl text-airbnb-pink" />;
+      case "soap": return <FiUmbrella className="text-xl text-airbnb-pink" />;
+      case "towels": return <FiUser className="text-xl text-airbnb-pink" />;
+      case "pillows": return <FiPocket className="text-xl text-airbnb-pink" />;
+      case "linens": return <GiWoodenChair className="text-xl text-airbnb-pink" />;
+      case "wifi": return <CiWifiOn className="text-xl text-airbnb-pink" />;
+      case "kitchen": return <MdKitchen className="text-xl text-airbnb-pink" />;
+      case "parking": return <MdLocalParking className="text-xl text-airbnb-pink" />;
+      case "pool": return <MdPool className="text-xl text-airbnb-pink" />;
+      case "tv": return <FiTv className="text-xl text-airbnb-pink" />;
+      case "air_conditioning": return <FiThermometer className="text-xl text-airbnb-pink" />;
+      case "smoke_alarm": return <FiAlertTriangle className="text-xl text-airbnb-pink" />;
+      case "first_aid": return <FiPlusSquare className="text-xl text-airbnb-pink" />;
+      default: return null;
     }
   };
 
@@ -160,6 +195,10 @@ const ListingDetail = () => {
     return labels[amenity] || amenity;
   };
 
+  // ======================
+  //  Loading & Error States
+  // ======================
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -175,6 +214,10 @@ const ListingDetail = () => {
       </div>
     );
   }
+
+  // ======================
+  //  Main Component Render
+  // ======================
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -355,23 +398,62 @@ const ListingDetail = () => {
                 key={review._id}
                 className="border-b border-gray-100 pb-6 last:border-0"
               >
-                <div className="flex items-center mb-3">
-                  <img
-                    src={review.user.profileImage}
-                    alt={review.user.name}
-                    className="w-10 h-10 rounded-full mr-3"
-                  />
-                  <div>
-                    <h4 className="font-medium">{review.user.name}</h4>
-                    <p className="text-sm text-gray-500">
-                      {new Date(review.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <img
+                      src={review.user.profileImage}
+                      alt={review.user.name}
+                      className="w-10 h-10 rounded-full mr-3"
+                    />
+                    <div>
+                      <h4 className="font-medium">{review.user.name}</h4>
+                      <p className="text-sm text-gray-500">
+                        {new Date(review.createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </div>
                   </div>
+                  
+                  {/* Delete Button with Confirmation */}
+                  {user && (user._id === review.user._id || user.role === 'admin') && (
+                    <div className="relative">
+                      {showDeleteConfirm === review._id ? (
+                        <div className="flex items-center space-x-2 bg-white p-2 rounded-lg shadow-md absolute right-0 top-8 z-10">
+                          <span className="text-sm text-gray-700">Delete?</span>
+                          <button
+                            onClick={() => handleDeleteReview(review._id)}
+                            className="px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition"
+                            disabled={reviewLoading}
+                          >
+                            Yes
+                          </button>
+                          <button
+                            onClick={() => setShowDeleteConfirm(null)}
+                            className="px-2 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition"
+                          >
+                            No
+                          </button>
+                        </div>
+                      ) : null}
+                      
+                      <button 
+                        onClick={() => setShowDeleteConfirm(review._id)}
+                        className="text-red-500 hover:text-red-700 text-sm font-medium"
+                        disabled={reviewLoading}
+                      >
+                        {reviewLoading && showDeleteConfirm === review._id ? (
+                          <ClipLoader color="#ef4444" size={16} />
+                        ) : (
+                          'Delete'
+                        )}
+                      </button>
+                    </div>
+                  )}
                 </div>
+                
                 <div className="mb-2">
                   <Rating value={review.rating} precision={0.5} readOnly />
                 </div>
