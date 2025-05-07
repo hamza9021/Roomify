@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'https://roomify-2-2y0a.onrender.com/',
+      '/api': 'https://roomify-2-2y0a.onrender.com',
     },
   },
 })
