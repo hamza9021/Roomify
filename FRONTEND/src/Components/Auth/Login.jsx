@@ -23,10 +23,9 @@ const Login = () => {
             [name]: value,
         }));
     };
-
     const api = axios.create({
-        baseURL: "https://roomify-2-2y0a.onrender.com",
-        withCredentials: true,
+        baseURL: "https://roomify-2-2y0a.onrender.com", 
+        withCredentials: true, 
     });
 
     const handleFormData = async (event) => {
