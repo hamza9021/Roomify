@@ -76,7 +76,8 @@ const loginUser = wrapperFunction(async (req, res) => {
     const cookieOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "none",
+        domain: "roomify-drab",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     };
 
