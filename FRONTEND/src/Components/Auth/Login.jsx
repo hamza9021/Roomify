@@ -23,17 +23,15 @@ const Login = () => {
             [name]: value,
         }));
     };
-    const api = axios.create({
-        baseURL: "https://roomify-2-2y0a.onrender.com", 
-        withCredentials: true, 
-    });
 
     const handleFormData = async (event) => {
         event.preventDefault();
         setLoading(true);
 
         try {
-            const response = await api.post("/api/v1/users/login", formData);
+            const response = await axios.post(`${corUrl}/api/v1/users/login`, formData, {
+                withCredentials: true
+            });
             toast.success(response.data.message);
             navigate("/");
         } catch (error) {
