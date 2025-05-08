@@ -13,6 +13,8 @@ import {
 } from "react-icons/hi";
 
 const Register = () => {
+    const corUrl = "https://roomify-2-2y0a.onrender.com";
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -66,11 +68,15 @@ const Register = () => {
         form.append("profileImage", formData.profileImage);
 
         try {
-            const response = await axios.post("/api/v1/users/register", form, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            const response = await axios.post(
+                `${corUrl}/api/v1/users/register`,
+                form,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
             toast.success(`${response.data.message}`);
             navigate("/login");
         } catch (error) {

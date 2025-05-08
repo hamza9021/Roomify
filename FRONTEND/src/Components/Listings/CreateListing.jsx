@@ -17,6 +17,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 const CreateListing = () => {
+    const corUrl = "https://roomify-2-2y0a.onrender.com";
+
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -93,7 +95,7 @@ const CreateListing = () => {
 
         try {
             const response = await axios.post(
-                "/api/v1/listings/create-listing",
+                `${corUrl}/api/v1/listings/create-listing`,
                 form,
                 {
                     // Let the browser set the Content-Type header automatically
@@ -283,7 +285,7 @@ const CreateListing = () => {
                     <label htmlFor="location">Location:</label>
                     <input
                         id="location"
-                        type="text" 
+                        type="text"
                         name="location"
                         value={formData.location}
                         onChange={handleChange}

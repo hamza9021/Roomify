@@ -6,6 +6,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { HiMail, HiLockClosed } from "react-icons/hi";
 
 const Login = () => {
+    const corUrl = "https://roomify-2-2y0a.onrender.com";
+
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -33,7 +35,7 @@ const Login = () => {
         }
 
         try {
-            const response = await axios.post("https://roomify-2-2y0a.onrender.com/api/v1/users/login", {
+            const response = await axios.post(`${corUrl}/api/v1/users/login`, {
                 email,
                 password,
             });
