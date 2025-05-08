@@ -33,7 +33,7 @@ const Login = () => {
                 withCredentials: true
             });
             toast.success(response.data.message);
-            navigate("/");
+            // navigate("/");
         } catch (error) {
             toast.error(error.response?.data?.message || "Login failed");
         } finally {
