@@ -4,6 +4,9 @@ import express from "express";
 const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { userRouter } from "./Routes/user.routes.js";
+import { listingRouter } from "./Routes/listing.routes.js";
+import { reviewRouter } from "./Routes/review.routes.js";
 
 // ✅ Fix: Explicitly set CORS for all routes
 const corsOptions = {
