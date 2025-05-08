@@ -38,7 +38,7 @@ const Login = () => {
             const response = await axios.post(`${corUrl}/api/v1/users/login`, {
                 email,
                 password,
-            });
+            }, {withCredentials: true});
             toast.success(response.data.message);
             navigate("/");
         } catch (error) {
