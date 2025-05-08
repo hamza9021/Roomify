@@ -8,6 +8,7 @@ import { userRouter } from "./Routes/user.routes.js";
 import { listingRouter } from "./Routes/listing.routes.js";
 import { reviewRouter } from "./Routes/review.routes.js";
 
+app.set('trust proxy', 1); 
 // ✅ Fix: Explicitly set CORS for all routes
 const corsOptions = {
   origin: process.env.CORS_ORIGIN, 
