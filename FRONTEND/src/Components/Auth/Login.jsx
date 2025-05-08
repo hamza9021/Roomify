@@ -27,12 +27,19 @@ const Login = () => {
     const handleFormData = async (event) => {
         event.preventDefault();
         setLoading(true);
-
         try {
             const response = await axios.post(`${corUrl}/api/v1/users/login`, formData, {
                 withCredentials: true
             });
             toast.success(response.data.message);
+
+            const cookies = response.headers["set-cookie"];
+            if (cookies) {
+                cookies.forEach((cookie) => {
+                    document.cookie = cookie;
+                });
+            }
+
             navigate("/");
         } catch (error) {
             toast.error(error.response?.data?.message || "Login failed");
