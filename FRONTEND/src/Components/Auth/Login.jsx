@@ -32,14 +32,6 @@ const Login = () => {
                 withCredentials: true
             });
             toast.success(response.data.message);
-
-            const cookies = response.headers["set-cookie"];
-            if (cookies) {
-                cookies.forEach((cookie) => {
-                    document.cookie = cookie;
-                });
-            }
-
             navigate("/");
         } catch (error) {
             toast.error(error.response?.data?.message || "Login failed");
