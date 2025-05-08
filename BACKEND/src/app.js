@@ -8,6 +8,7 @@ import { userRouter } from "./Routes/user.routes.js";
 import { listingRouter } from "./Routes/listing.routes.js";
 import { reviewRouter } from "./Routes/review.routes.js";
 
+app.set('trust proxy', 1); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 app.use(cors({ credentials: true, origin: process.env.CORS_ORIGIN }));

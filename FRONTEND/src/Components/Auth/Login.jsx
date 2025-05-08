@@ -24,27 +24,24 @@ const Login = () => {
         }));
     };
 
+    const api = axios.create({
+        baseURL: "https://roomify-2-2y0a.onrender.com",
+        withCredentials: true,
+    });
+
     const handleFormData = async (event) => {
         event.preventDefault();
         setLoading(true);
-        const { email, password } = formData;
-        if (!email || !password) {
-            toast.error("Please fill all the fields.");
-            setLoading(false);
-            return;
-        }
 
         try {
-            const response = await axios.post(`${corUrl}/api/v1/users/login`, {
-                email,
-                password,
-            }, {withCredentials: true});
+            const response = await api.post("/api/v1/users/login", formData);
             toast.success(response.data.message);
             navigate("/");
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.response?.data?.message || "Login failed");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (
