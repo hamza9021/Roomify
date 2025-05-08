@@ -8,10 +8,18 @@ import { userRouter } from "./Routes/user.routes.js";
 import { listingRouter } from "./Routes/listing.routes.js";
 import { reviewRouter } from "./Routes/review.routes.js";
 
-app.set('trust proxy', 1); 
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "20kb" }));
-app.use(cors({ credentials: true, origin: process.env.CORS_ORIGIN }));
+app.use(
+    cors({
+        origin: process.env.CORS_ORIGIN,
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+);
+
 app.use(cookieParser());
 app.use(express.static("./public"));
 
@@ -19,4 +27,6 @@ app.use(express.static("./public"));
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/listings", listingRouter);
 app.use("/api/v1/reviews", reviewRouter);
+
+
 export { app };
