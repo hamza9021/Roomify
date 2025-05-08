@@ -76,8 +76,7 @@ const loginUser = wrapperFunction(async (req, res) => {
     const cookieOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: "None",
-        domain: 'roomify-drab.vercel.app',
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     };
 
