@@ -11,14 +11,19 @@ import { reviewRouter } from "./Routes/review.routes.js";
 app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "20kb" }));
-app.use(
-    cors({
-        origin: process.env.CORS_ORIGIN,
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-    })
-);
+
+app.use(cors({
+  origin: process.env.CORS_ORIGIN,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.options("*", cors({
+  origin: process.env.CORS_ORIGIN,
+  credentials: true
+}));
+
 
 app.use(cookieParser());
 app.use(express.static("./public"));
