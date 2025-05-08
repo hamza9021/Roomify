@@ -29,22 +29,13 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`${corUrl}/api/v1/users/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(formData),
+            const response = await axios.post(`${corUrl}/api/v1/users/login`, formData, {
+                withCredentials: true
             });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data?.message || "Login failed");
-            }
-            toast.success(data.message);
-            // navigate("/");
+            toast.success(response.data.message);
+            navigate("/");
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.response?.data?.message || "Login failed");
         } finally {
             setLoading(false);
         }
