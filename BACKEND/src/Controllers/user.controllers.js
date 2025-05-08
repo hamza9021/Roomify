@@ -77,7 +77,7 @@ const loginUser = wrapperFunction(async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        domain: "roomify-drab.vercel.app",
+        domain: ".roomify-drab.vercel.app",
     };
 
     return res
