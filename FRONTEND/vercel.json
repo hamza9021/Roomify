@@ -1,13 +1,5 @@
 {
-  "version": 2,
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://roomify-2-2y0a.onrender.com/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+   "rewrites":  [
+       {"source": "/(.*)", "destination": "/"}
+    ]
 }

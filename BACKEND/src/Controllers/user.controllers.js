@@ -76,7 +76,6 @@ const loginUser = wrapperFunction(async (req, res) => {
     const cookieOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: "None",
     };
 
     return res
