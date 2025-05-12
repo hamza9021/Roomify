@@ -25,7 +25,7 @@ const Login = () => {
         event.preventDefault();
         setLoading(true);
         try {
-            const response = await axios.post("/api/v1/users/login", formData);
+            const response = await axios.post("/api/v1/users/login", formData,{withCredentials: true});
             toast.success(response.data.message);
             navigate("/");
         } catch (error) {
