@@ -13,7 +13,6 @@ import {
 } from "react-icons/hi";
 
 const Register = () => {
-    const corUrl = "https://roomify-2-2y0a.onrender.com";
 
     const [formData, setFormData] = useState({
         name: "",
@@ -69,7 +68,7 @@ const Register = () => {
 
         try {
             const response = await axios.post(
-                `${corUrl}/api/v1/users/register`,
+                "/api/v1/users/register",
                 form,
                 {
                     headers: {

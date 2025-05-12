@@ -8,12 +8,8 @@ const Home = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const corUrl = "https://roomify-2-2y0a.onrender.com";
-
             try {
-                const response = await axios.get(`${corUrl}/api/v1/listings`, {
-                    withCredentials: true,
-                });
+                const response = await axios.get(`/api/v1/listings`);
                 if (!response.data || !response.data.data) {
                     throw new Error("No data received from server");
                 }

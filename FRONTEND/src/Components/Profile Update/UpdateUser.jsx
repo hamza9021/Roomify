@@ -6,7 +6,6 @@ import { HiUser, HiHome, HiLockClosed, HiCamera } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
 const UpdateUser = () => {
-    const corUrl = "https://roomify-2-2y0a.onrender.com";
 
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -43,7 +42,7 @@ const UpdateUser = () => {
 
         try {
             const response = await axios.patch(
-                `${corUrl}/api/v1/users/update/profile`,
+                "/api/v1/users/update/profile",
                 updateUser
             );
             if (response.status === 200) {
@@ -73,7 +72,7 @@ const UpdateUser = () => {
 
         try {
             const response = await axios.patch(
-                `${corUrl}/api/v1/users/update/profile/image`,
+                "/api/v1/users/update/profile/image",
                 formData
             );
             if (response.status === 200) {
@@ -94,7 +93,7 @@ const UpdateUser = () => {
 
         try {
             const response = await axios.patch(
-                `${corUrl}/api/v1/users/update/password`,
+                "/api/v1/users/update/password",
                 password
             );
             if (response.status === 200) {
@@ -115,7 +114,7 @@ const UpdateUser = () => {
     const getUser = async () => {
         try {
             const response = await axios.get(
-                `${corUrl}/api/v1/users/get/profile`
+                "/api/v1/users/get/profile"
             );
             setUpdateUser(response.data.data);
             setProfileImage(response.data.data.profileImage);

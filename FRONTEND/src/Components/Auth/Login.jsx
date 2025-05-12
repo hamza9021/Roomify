@@ -4,10 +4,7 @@ import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { useNavigate, Link } from "react-router-dom";
 import { HiMail, HiLockClosed } from "react-icons/hi";
-
 const Login = () => {
-    const corUrl = "https://roomify-2-2y0a.onrender.com";
-
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -28,9 +25,7 @@ const Login = () => {
         event.preventDefault();
         setLoading(true);
         try {
-            const response = await axios.post(`${corUrl}/api/v1/users/login`, formData, {
-                withCredentials: true
-            });
+            const response = await axios.post("/api/v1/users/login", formData);
             toast.success(response.data.message);
             navigate("/");
         } catch (error) {

@@ -21,9 +21,8 @@ import {
 import { MdKitchen, MdLocalParking, MdPool } from "react-icons/md";
 import { GiWoodenChair } from "react-icons/gi";
 import { CiWifiOn } from "react-icons/ci";
-
 const ListingDetail = () => {
-    const corUrl = "https://roomify-2-2y0a.onrender.com";
+
 
     // State management
     const [listing, setListing] = useState(null);
@@ -48,7 +47,7 @@ const ListingDetail = () => {
         const fetchCurrentUser = async () => {
             try {
                 const response = await axios.get(
-                    `${corUrl}/api/v1/users/get/profile`
+                    "/api/v1/users/get/profile"
                 );
                 setUser(response.data.data);
             } catch (error) {
@@ -64,9 +63,7 @@ const ListingDetail = () => {
         const fetchListing = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(
-                    `${corUrl}/api/v1/listings/${id}`
-                );
+                const response = await axios.get(`/api/v1/listings/${id}`);
                 if (!response.data) {
                     toast.error("No data received from server");
                     return;
@@ -128,7 +125,7 @@ const ListingDetail = () => {
         setReviewLoading(true);
         try {
             const response = await axios.post(
-                `${corUrl}/api/v1/reviews/${id}/create-review`,
+                `/api/v1/reviews/${id}/create-review`,
                 {
                     rating,
                     comment,
@@ -139,9 +136,7 @@ const ListingDetail = () => {
                 setComment("");
                 setRating(2);
                 // Refresh listing to show new review
-                const updatedListing = await axios.get(
-                    `/api/v1/listings/${id}`
-                );
+                const updatedListing = await axios.get(`/api/v1/listings/${id}`);
                 setListing(updatedListing.data.data);
             }
         } catch (error) {
@@ -155,7 +150,7 @@ const ListingDetail = () => {
         setReviewLoading(true);
         try {
             await axios.delete(
-                `${corUrl}/api/v1/reviews/${id}/${reviewId}/delete-review`
+                `/api/v1/reviews/${id}/${reviewId}/delete-review`
             );
             toast.success("Review deleted successfully");
             // Refresh listing to reflect deletion

@@ -8,19 +8,12 @@ import { userRouter } from "./Routes/user.routes.js";
 import { listingRouter } from "./Routes/listing.routes.js";
 import { reviewRouter } from "./Routes/review.routes.js";
 
-app.set('trust proxy', 1); 
-// ✅ Fix: Explicitly set CORS for all routes
 const corsOptions = {
   origin: process.env.CORS_ORIGIN, 
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"],
-  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
-
-app.options("*", cors(corsOptions)); // Preflight response
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 app.use(cookieParser());

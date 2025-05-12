@@ -4,15 +4,13 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 const Logout = () => {
-    const corUrl = "https://roomify-2-2y0a.onrender.com";
-
     const navigate = useNavigate();
 
     useEffect(() => {
         const handleLogout = async () => {
             try {
                 const response = await axios.post(
-                    `${corUrl}/api/v1/users/logout`
+                    "/api/v1/users/logout"
                 );
                 if (response) {
                     toast.success(response.data.message);
