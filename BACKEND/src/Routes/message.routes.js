@@ -6,6 +6,7 @@ import {
     createMessageWithFile,
     createMessageWithText,
     getMessages,
+    deleteMessage,
 } from "../Controllers/message.controllers.js";
 
 messageRouter

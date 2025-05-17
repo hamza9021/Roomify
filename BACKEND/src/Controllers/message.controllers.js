@@ -115,4 +115,39 @@ const getMessages = wrapperFunction(async (req, res) => {
         );
 });
 
-export { createMessageWithText, createMessageWithFile, getMessages };
+const deleteMessage = wrapperFunction(async (req, res) => {
+    const user = req.user;
+    if (!user) {
+        throw new ApiError(401, "Unauthorized");
+    }
+
+    const { receiverId } = req.params;
+    if (!receiverId) {
+        throw new ApiError(400, "Receiver ID is required");
+    }
+    const receiver = await User.findById(receiverId);
+    if (!receiver) {
+        throw new ApiError(404, "Receiver not found");
+    }
+
+    const { messageId } = req.params;
+    if (!messageId) {
+        throw new ApiError(400, "Message ID is required");
+    }
+    const message = await Message.findById(messageId);
+    if (!message) {
+        throw new ApiError(404, "Message not found");
+    }
+    if (message.sender.toString() !== user._id.toString()) {
+        throw new ApiError(403, "You are not authorized to delete this message");
+    }
+    const deletedMessage = await Message.findByIdAndDelete(messageId);
+    if (!deletedMessage) {
+        throw new ApiError(500, "Failed to delete message");
+    }
+    return res
+        .status(200)
+        .json(new ApiResponse(200, deletedMessage, "Message deleted successfully"));
+});
+
+export { createMessageWithText, createMessageWithFile, getMessages, deleteMessage };
