@@ -139,7 +139,10 @@ const deleteMessage = wrapperFunction(async (req, res) => {
         throw new ApiError(404, "Message not found");
     }
     if (message.sender.toString() !== user._id.toString()) {
-        throw new ApiError(403, "You are not authorized to delete this message");
+        throw new ApiError(
+            403,
+            "You are not authorized to delete this message"
+        );
     }
     const deletedMessage = await Message.findByIdAndDelete(messageId);
     if (!deletedMessage) {
@@ -147,7 +150,14 @@ const deleteMessage = wrapperFunction(async (req, res) => {
     }
     return res
         .status(200)
-        .json(new ApiResponse(200, deletedMessage, "Message deleted successfully"));
+        .json(
+            new ApiResponse(200, deletedMessage, "Message deleted successfully")
+        );
 });
 
-export { createMessageWithText, createMessageWithFile, getMessages, deleteMessage };
+export {
+    createMessageWithText,
+    createMessageWithFile,
+    getMessages,
+    deleteMessage,
+};

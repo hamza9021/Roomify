@@ -20,6 +20,8 @@ messageRouter
         createMessageWithFile
     );
 messageRouter.route("/:receiverId/get-messages").get(verifyJWT, getMessages);
-messageRouter.route("/:receiverId/:messageId/delete-message").delete(verifyJWT,deleteMessage);
+messageRouter
+    .route("/:receiverId/:messageId/delete-message")
+    .delete(verifyJWT, deleteMessage);
 
 export { messageRouter };
