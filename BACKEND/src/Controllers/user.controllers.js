@@ -100,9 +100,23 @@ const logoutUser = wrapperFunction(async (req, res) => {
 });
 
 const getUserProfile = wrapperFunction(async (req, res) => {
-    const user = await User.findById(req.user._id).select(
-        "-password -refreshToken"
-    );
+    const user = await User.findById(req.user._id)
+        .populate({
+            path: "messages",
+            select: "content attachments createdAt status",
+            populate: [
+                {
+                    path: "sender",
+                    select: "name profilePicture"
+                },
+                {
+                    path: "receiver",
+                    select: "name profilePicture"
+                }
+            ]
+        })
+        .select("-password -refreshToken");
+    
     if (!user) {
         throw new ApiError(404, "User Not Found");
     }
