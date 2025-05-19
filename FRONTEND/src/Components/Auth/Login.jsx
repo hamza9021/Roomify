@@ -4,6 +4,9 @@ import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { useNavigate, Link } from "react-router-dom";
 import { HiMail, HiLockClosed } from "react-icons/hi";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
+
 const Login = () => {
     const [formData, setFormData] = useState({
         email: "",
@@ -11,6 +14,8 @@ const Login = () => {
     });
 
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
+    const [githubLoading, setGithubLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (event) => {
@@ -35,6 +40,26 @@ const Login = () => {
         }
     };
 
+    const handleOAuthGoogle = async () => {
+        try {
+            setGoogleLoading(true);
+            window.location.href = "http://localhost:8080/auth/google";
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Google login failed");
+            setGoogleLoading(false);
+        }
+    };
+
+    const handleOAuthGithub = async () => {
+        try {
+            setGithubLoading(true);
+            window.location.href = "http://localhost:8080/auth/github";
+        } catch (error) {
+            toast.error(error.response?.data?.message || "GitHub login failed");
+            setGithubLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
             <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
@@ -43,6 +68,48 @@ const Login = () => {
                         Welcome Back
                     </h1>
                     <p className="text-gray-600">Sign in to your account</p>
+                </div>
+
+                <div className="space-y-4 mb-6">
+                    <button
+                        onClick={handleOAuthGoogle}
+                        disabled={googleLoading}
+                        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF5A5F]/50 transition-all"
+                    >
+                        {googleLoading ? (
+                            <ClipLoader color="#4285F4" size={20} />
+                        ) : (
+                            <>
+                                <FcGoogle className="w-5 h-5" />
+                                <span className="text-gray-700 font-medium">
+                                    Continue with Google
+                                </span>
+                            </>
+                        )}
+                    </button>
+
+                    <button
+                        onClick={handleOAuthGithub}
+                        disabled={githubLoading}
+                        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF5A5F]/50 transition-all"
+                    >
+                        {githubLoading ? (
+                            <ClipLoader color="#333" size={20} />
+                        ) : (
+                            <>
+                                <FaGithub className="w-5 h-5 text-gray-800" />
+                                <span className="text-gray-700 font-medium">
+                                    Continue with GitHub
+                                </span>
+                            </>
+                        )}
+                    </button>
+                </div>
+
+                <div className="flex items-center mb-6">
+                    <div className="flex-grow border-t border-gray-200"></div>
+                    <span className="mx-4 text-gray-500 text-sm">OR</span>
+                    <div className="flex-grow border-t border-gray-200"></div>
                 </div>
 
                 <form onSubmit={handleFormData} className="space-y-6">
@@ -55,6 +122,7 @@ const Login = () => {
                             value={formData.email}
                             onChange={handleChange}
                             className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 focus:border-[#FF5A5F] focus:ring-1 focus:ring-[#FF5A5F] transition-all placeholder-gray-400"
+                            required
                         />
                     </div>
 
@@ -67,6 +135,7 @@ const Login = () => {
                             value={formData.password}
                             onChange={handleChange}
                             className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 focus:border-[#FF5A5F] focus:ring-1 focus:ring-[#FF5A5F] transition-all placeholder-gray-400"
+                            required
                         />
                     </div>
 
