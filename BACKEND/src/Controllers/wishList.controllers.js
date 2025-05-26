@@ -21,6 +21,7 @@ const getWishList = wrapperFunction(async (req, res) => {
     }
     return res.status(200).json(new ApiResponse(200, wishlist, "WishList"));
 });
+
 const addToWishList = wrapperFunction(async (req, res) => {
     const user = req.user;
     if (!user) {
@@ -44,6 +45,7 @@ const addToWishList = wrapperFunction(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, wishlist, "Listing added to WishList"));
 });
+
 const removeFromWishList = wrapperFunction(async (req, res) => {
     const user = req.user;
     if (!user) {

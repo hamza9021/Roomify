@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Review } from "./review.models.js";
-
+import { WishList } from "./wishList.models.js";
 const listingSchema = new mongoose.Schema(
     {
         title: {
@@ -135,6 +135,7 @@ const listingSchema = new mongoose.Schema(
 listingSchema.post("findOneAndDelete", async function (data) {
     if (data) {
         await Review.deleteMany({ _id: { $in: data.reviews } });
+        await WishList.updateMany({}, { $pull: { listings: data._id } });
     }
 });
 

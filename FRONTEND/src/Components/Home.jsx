@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Navbar from "./shared/navbar";
 
 const Home = () => {
     const [listings, setListings] = useState([]);
@@ -42,7 +43,8 @@ const Home = () => {
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-4">
+            <Navbar />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-4 mt-20">
                 {listings.map((listing) => (
                     <Link to={`/listing/${listing._id}`} key={listing._id}>
                         <div className="bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
