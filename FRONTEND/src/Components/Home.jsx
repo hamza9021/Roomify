@@ -28,13 +28,24 @@ const Home = () => {
         console.log("Listings updated:", listings);
     }, [listings]);
 
+    const handleAddToWishList = async (e) => {
+        e.preventDefault();
+        const listingId = e.currentTarget.getAttribute("data-listing-id");
+        try {
+            const response = await axios.post(`/api/v1/wishlist/${listingId}`);
+            toast.success("Added to wishlist successfully");
+            console.log("Wishlist updated:", response.data);
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        }
+    };
+
     return (
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-4">
                 {listings.map((listing) => (
                     <Link to={`/listing/${listing._id}`} key={listing._id}>
                         <div className="bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                            {/* Image with save button */}
                             <div className="relative">
                                 <img
                                     src={
@@ -44,7 +55,11 @@ const Home = () => {
                                     alt={listing.title}
                                     className="w-full h-64 object-cover rounded-t-xl"
                                 />
-                                <button className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white transition-colors duration-200">
+                                <button
+                                    className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white transition-colors duration-200"
+                                    onClick={handleAddToWishList}
+                                    data-listing-id={listing._id}
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="h-5 w-5 text-gray-700"
@@ -60,6 +75,7 @@ const Home = () => {
                                         />
                                     </svg>
                                 </button>
+                                {/* </Link> */}
                             </div>
 
                             {/* Card Content */}
