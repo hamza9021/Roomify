@@ -5,9 +5,11 @@ import { Booking } from "../Models/booking.models.js";
 import { Listing } from "../Models/listing.models.js";
 import { User } from "../Models/user.models.js";
 
-const createBooking = wrapperFunction(async (req, res, next) => {
+const createBooking = wrapperFunction(async (req, res) => {
     const { listingID } = req.params;
-    const { checkInDate, checkOutDate } = req.body;
+    const { checkInDate, checkOutDate, Guests, totalPrice } = req.body;
+
+    console.log("Request body:", req.body);
 
     if (!listingID) {
         throw new ApiError(400, "Listing ID is required");
@@ -43,7 +45,8 @@ const createBooking = wrapperFunction(async (req, res, next) => {
         listing: listing._id,
         checkInDate: checkIn,
         checkOutDate: checkOut,
-        totalPrice: listing.pricePerNight * totalNumberOfDays,
+        Guests: Guests,
+        totalPrice: totalPrice,
     };
 
     const createdBooking = await Booking.create(booking);

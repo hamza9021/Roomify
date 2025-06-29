@@ -8,7 +8,10 @@ import {
     UpdateUser,
     CreateListing,
     ListingDetail,
-    Messages
+    Messages,
+    MyListing,
+    UpdateListing,
+    MyTrip
 } from "./Components";
 import { Toaster } from "react-hot-toast";
 
@@ -44,6 +47,18 @@ const appRouter = createBrowserRouter([
     {
         path: "/messages",
         element: <Messages />,
+    },
+    {
+        path: "/host/listings",
+        element: <MyListing />,
+    },
+    {
+        path: "/update-listing/:id",
+        element: <UpdateListing />,
+    },
+    {
+        path: "trips",
+        element: <MyTrip />,
     }
 ]);
 
