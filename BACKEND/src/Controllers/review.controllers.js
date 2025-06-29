@@ -30,7 +30,17 @@ const createReview = wrapperFunction(async (req, res) => {
         { $push: { reviews: review._id } },
         { new: true },
     );
-
+    await Listing.findByIdAndUpdate(
+        id,
+        {
+            $inc: {
+                "rating.averageRating": rating,
+                "rating.totalReviews": 1,
+            },
+        },
+        { new: true },
+    );
+    
     return res
         .status(200)
         .json(new ApiResponse(200, review, "Review Created Successfully"));

@@ -24,10 +24,10 @@ const createListing = wrapperFunction(async (req, res) => {
         tags,
         catogeroy,
     } = req.body;
-    
-const photos = req.files?.photos || [];
+
+    const photos = req.files?.photos || [];
     if (photos.length === 0) {
-        throw new ApiError(400, "At least one attachment is required");
+        throw new ApiError(400, "At least one photo is required");
     }
 
     const allowedTypes = [
@@ -54,7 +54,7 @@ const photos = req.files?.photos || [];
     }
 
     const photoUrls = [];
-    
+
     try {
         for (const photo of photos) {
             const { secure_url } = await uploadOnCloudinary(photo.path);
@@ -81,13 +81,11 @@ const photos = req.files?.photos || [];
         beds,
         bathrooms,
         amenities,
-        photos,
         unavailableDates,
         tags,
         catogeroy,
         photos: photoUrls,
     });
-    console.log(listing);
 
     if (!listing) {
         throw new ApiError(500, "Listing not created");
@@ -125,14 +123,14 @@ const deleteListing = wrapperFunction(async (req, res) => {
 
 const updateListing = wrapperFunction(async (req, res) => {
     const user = req.user;
-    console.log(req.body);
     const { id } = req.params;
+
     if (!user) {
         throw new ApiError(401, "Unauthorized");
     }
 
     if (!id) {
-        throw new ApiError(400, "Missing required fields");
+        throw new ApiError(400, "Listing ID is required");
     }
 
     const listing = await Listing.findById(id);
@@ -141,7 +139,7 @@ const updateListing = wrapperFunction(async (req, res) => {
     }
 
     if (listing.host.toString() !== user._id.toString()) {
-        throw new ApiError(401, "Unauthorized");
+        throw new ApiError(403, "You can only update your own listings");
     }
 
     const {
@@ -154,52 +152,94 @@ const updateListing = wrapperFunction(async (req, res) => {
         rooms,
         beds,
         bathrooms,
-        amenities,
-        photos,
-        unavailableDates,
+        amenities = [],
+        unavailableDates = [],
         policies,
         tags,
-        catogery,
+        category,
+        existingPhotos = [] // Add this to handle existing photos
     } = req.body;
 
-    await Listing.findOneAndUpdate(
-        { _id: id },
+    // Validate required fields
+    if (!title || !description || !placeType || !location || !pricePerNight) {
+        throw new ApiError(400, "Missing required fields");
+    }
+
+    // Handle photo updates
+    let photoUrls = Array.isArray(existingPhotos) ? [...existingPhotos] : [existingPhotos];
+    const newPhotos = req.files?.photos || [];
+
+    // Validate at least one photo exists
+    if (photoUrls.length === 0 && newPhotos.length === 0) {
+        throw new ApiError(400, "At least one photo is required");
+    }
+
+    if (newPhotos.length > 0) {
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        for (const photo of newPhotos) {
+            if (!allowedTypes.includes(photo.mimetype)) {
+                throw new ApiError(
+                    400,
+                    `Invalid file type: ${photo.originalname}. Only JPEG, PNG, and WEBP are allowed.`
+                );
+            }
+            if (photo.size > maxSize) {
+                throw new ApiError(
+                    400,
+                    `File too large: ${photo.originalname}. Maximum size is 5MB.`
+                );
+            }
+        }
+
+        try {
+            // Upload new photos
+            const newPhotoUrls = await Promise.all(
+                newPhotos.map(async (photo) => {
+                    const { secure_url } = await uploadOnCloudinary(photo.path);
+                    if (!secure_url) {
+                        throw new Error("Failed to upload photo");
+                    }
+                    return secure_url;
+                })
+            );
+
+            // Combine new photos with existing ones
+            photoUrls = [...photoUrls, ...newPhotoUrls];
+        } catch (error) {
+            throw new ApiError(500, "Error uploading photos: " + error.message);
+        }
+    }
+
+    const updatedListing = await Listing.findByIdAndUpdate(
+        id,
         {
             title,
             description,
             placeType,
             location,
-            pricePerNight,
-            maxGuests,
-            rooms,
-            beds,
-            bathrooms,
-            amenities,
-            photos,
-            unavailableDates,
+            pricePerNight: parseFloat(pricePerNight),
+            maxGuests: parseInt(maxGuests),
+            rooms: parseInt(rooms),
+            beds: parseInt(beds),
+            bathrooms: parseFloat(bathrooms),
+            amenities: Array.isArray(amenities) ? amenities : [amenities].filter(Boolean),
+            photos: photoUrls,
+            unavailableDates: Array.isArray(unavailableDates) ? unavailableDates : [unavailableDates].filter(Boolean),
             policies,
-            tags,
-            catogery,
+            tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
+            category,
         },
-        { new: true }
+        { new: true, runValidators: true }
     );
+
     return res
         .status(200)
-        .json(new ApiResponse(200, {}, "Listing updated successfully"));
+        .json(
+            new ApiResponse(200, updatedListing, "Listing updated successfully")
+        );
 });
-
-// const getListing = wrapperFunction(async (req, res) => {
-//     const { id } = req.params;
-
-//     if (!id) {
-//         throw new ApiError(400, "URL parameter missing");
-//     }
-//     const listing = await Listing.findById(id);
-//     if (!listing) {
-//         throw new ApiError(404, "Listing not found");
-//     }
-//     return res.status(200).json(new ApiResponse(200, listing, "Listing found"));
-// });
 
 const getAllListings = wrapperFunction(async (req, res) => {
     const listings = await Listing.find();
@@ -238,7 +278,7 @@ const getListing = wrapperFunction(async (req, res) => {
 
 const getAllHostListings = wrapperFunction(async (req, res) => {
     const user = req.user;
-    if( !user) {
+    if (!user) {
         throw new ApiError(401, "Unauthorized");
     }
 
@@ -252,12 +292,11 @@ const getAllHostListings = wrapperFunction(async (req, res) => {
         .json(new ApiResponse(200, listings, "Listings found"));
 });
 
-
 export {
     createListing,
     deleteListing,
     updateListing,
     getListing,
     getAllListings,
-    getAllHostListings
+    getAllHostListings,
 };

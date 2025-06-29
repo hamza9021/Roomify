@@ -2,22 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import {
-    FiHome,
-    FiMapPin,
-    FiUsers,
-    FiDroplet,
-    FiUmbrella,
-    FiUser,
-    FiPocket,
-    FiAlertTriangle,
-    FiPlus,
-    FiThermometer,
-    FiTv,
-    FiWifi,
-    FiEdit2,
-    FiTrash2,
-} from "react-icons/fi";
+import { FiHome, FiMapPin, FiUsers, FiDroplet, FiUmbrella, FiUser, FiPocket, 
+         FiAlertTriangle, FiPlus, FiThermometer, FiTv, FiWifi, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { MdKitchen, MdLocalParking, MdPool } from "react-icons/md";
 import { GiWoodenChair } from "react-icons/gi";
 import Navbar from "../shared/navbar";
@@ -45,74 +31,164 @@ const UpdateListing = () => {
     });
 
     useEffect(() => {
+        let isMounted = true;
         const fetchListing = async () => {
             try {
+                setLoading(true);
                 const response = await axios.get(`/api/v1/listings/${id}`);
-                setFormData(response.data.data);
+                if (isMounted) {
+                    const listing = response.data.data;
+                    
+                    setFormData({
+                        ...listing,
+                        tags: listing.tags?.join(", ") || "",
+                        photos: listing.photos || [],
+                        amenities: listing.amenities || []
+                    });
+                }
             } catch (error) {
-                toast.error("Failed to load listing");
-                console.error(error);
+                if (isMounted) {
+                    toast.error(error.response?.data?.message || "Failed to load listing");
+                    console.error("Fetch error:", error);
+                    navigate("/my-listings");
+                }
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
         fetchListing();
-    }, [id]);
+        
+        return () => {
+            isMounted = false;
+            // Clean up object URLs
+            formData.photos.forEach(photo => {
+                if (typeof photo !== 'string') {
+                    URL.revokeObjectURL(URL.createObjectURL(photo));
+                }
+            });
+        };
+    }, [id, navigate]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]:
-                type === "checkbox"
-                    ? checked
-                        ? [...prev.amenities, value]
-                        : prev.amenities.filter((item) => item !== value)
-                    : value,
-        }));
+        
+        if (type === "checkbox") {
+            setFormData(prev => ({
+                ...prev,
+                amenities: checked
+                    ? [...prev.amenities, value]
+                    : prev.amenities.filter(item => item !== value)
+            }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handlePhotoChange = (e) => {
         const files = Array.from(e.target.files);
-        setFormData((prev) => ({
-            ...prev,
-            photos: [...prev.photos, ...files],
-        }));
+        if (files.length + formData.photos.length > 10) {
+            toast.error("You can upload a maximum of 10 photos");
+            return;
+        }
+        
+        const validFiles = files.filter(file => {
+            const isValidType = file.type.match("image.*");
+            const isValidSize = file.size <= 5 * 1024 * 1024;
+            
+            if (!isValidType) {
+                toast.error(`Invalid file type: ${file.name}. Only images are allowed.`);
+                return false;
+            }
+            if (!isValidSize) {
+                toast.error(`File too large: ${file.name}. Maximum size is 5MB.`);
+                return false;
+            }
+            return true;
+        });
+        
+        if (validFiles.length > 0) {
+            setFormData(prev => ({
+                ...prev,
+                photos: [...prev.photos, ...validFiles]
+            }));
+        }
     };
 
     const removePhoto = (index) => {
-        setFormData((prev) => {
+        if (formData.photos.length <= 1) {
+            toast.error("At least one photo is required");
+            return;
+        }
+        
+        const photoToRemove = formData.photos[index];
+        
+        setFormData(prev => {
             const newPhotos = [...prev.photos];
             newPhotos.splice(index, 1);
             return { ...prev, photos: newPhotos };
         });
+        
+        // Clean up object URL if it's not a string (i.e., a new file)
+        if (typeof photoToRemove !== 'string') {
+            URL.revokeObjectURL(URL.createObjectURL(photoToRemove));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        
         try {
             const form = new FormData();
-            Object.keys(formData).forEach((key) => {
-                if (key === "photos") {
-                    formData.photos.forEach((photo) => {
-                        form.append("photos", photo);
-                    });
-                } else if (Array.isArray(formData[key])) {
-                    formData[key].forEach((item) => {
-                        form.append(`${key}[]`, item);
-                    });
-                } else {
-                    form.append(key, formData[key]);
+            
+            // Append all fields
+            Object.keys(formData).forEach(key => {
+                if (key !== "photos") {
+                    if (Array.isArray(formData[key])) {
+                        // Handle array fields
+                        formData[key].forEach(item => form.append(key, item));
+                    } else {
+                        form.append(key, formData[key]);
+                    }
                 }
             });
-
-            await axios.patch(`/api/v1/listings/${id}/update-listing`, form);
-            toast.success("Listing updated successfully");
-            navigate("/my-listings");
-        } catch (error) {
-            toast.error(
-                error.response?.data?.message || "Failed to update listing"
+            
+            // Separate existing photos (URLs) and new photos (Files)
+            const existingPhotos = formData.photos
+                .filter(photo => typeof photo === 'string')
+                .map(photo => photo);
+            
+            const newPhotos = formData.photos
+                .filter(photo => typeof photo !== 'string');
+            
+            // Append existing photos
+            existingPhotos.forEach(photo => form.append('existingPhotos', photo));
+            
+            // Append new photos
+            newPhotos.forEach(photo => form.append('photos', photo));
+            
+            const response = await axios.patch(
+                `/api/v1/listings/${id}/update-listing`,
+                form,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                    withCredentials: true
+                }
             );
-            console.error(error);
+            
+            toast.success("Listing updated successfully");
+            navigate(`/listing/${id}`);
+        } catch (error) {
+            console.error("Update error:", error);
+            toast.error(
+                error.response?.data?.message || 
+                error.message || 
+                "Failed to update listing"
+            );
         } finally {
             setLoading(false);
         }
@@ -124,47 +200,53 @@ const UpdateListing = () => {
         { value: "parking", label: "Parking", icon: <MdLocalParking /> },
         { value: "pool", label: "Pool", icon: <MdPool /> },
         { value: "tv", label: "TV", icon: <FiTv /> },
-        {
-            value: "air_conditioning",
-            label: "Air Conditioning",
-            icon: <FiThermometer />,
-        },
+        { value: "air_conditioning", label: "Air Conditioning", icon: <FiThermometer /> },
         { value: "toilet_paper", label: "Toilet Paper", icon: <FiDroplet /> },
         { value: "soap", label: "Soap", icon: <FiUmbrella /> },
         { value: "towels", label: "Towels", icon: <FiUser /> },
         { value: "pillows", label: "Pillows", icon: <FiPocket /> },
         { value: "linens", label: "Linens", icon: <GiWoodenChair /> },
-        {
-            value: "smoke_alarm",
-            label: "Smoke Alarm",
-            icon: <FiAlertTriangle />,
-        },
+        { value: "smoke_alarm", label: "Smoke Alarm", icon: <FiAlertTriangle /> },
     ];
+
+    if (loading && !formData.title) {
+        return (
+            <div className="min-h-screen bg-gray-50 pt-24 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-airbnb-pink mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading listing details...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>
             <Navbar />
-            <div className="min-h-screen bg-gray-50 pt-24">
-                <div className="max-w-6xl mx-auto px-4 py-8">
+            <div className="min-h-screen bg-gray-50 pt-24 pb-12">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div className="p-6 border-b border-gray-200">
-                            <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+                        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-airbnb-pink to-airbnb-pink-dark">
+                            <h1 className="text-3xl font-bold text-white flex items-center">
                                 <FiEdit2 className="mr-2" /> Edit Your Listing
                             </h1>
+                            <p className="text-white opacity-90 mt-1">
+                                Update your property details to attract more guests
+                            </p>
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-6 space-y-8">
                             {/* Basic Information Section */}
                             <div className="space-y-6">
-                                <h2 className="text-xl font-semibold text-gray-700 border-b pb-2">
-                                    Basic Information
+                                <h2 className="text-xl font-semibold text-gray-700 border-b pb-2 flex items-center">
+                                    <FiHome className="mr-2" /> Basic Information
                                 </h2>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {/* Title */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Title
+                                            Title*
                                         </label>
                                         <input
                                             type="text"
@@ -180,8 +262,7 @@ const UpdateListing = () => {
                                     {/* Location */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                                            <FiMapPin className="mr-1" />{" "}
-                                            Location
+                                            <FiMapPin className="mr-1" /> Location*
                                         </label>
                                         <input
                                             type="text"
@@ -198,7 +279,7 @@ const UpdateListing = () => {
                                 {/* Description */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Description
+                                        Description*
                                     </label>
                                     <textarea
                                         name="description"
@@ -209,46 +290,43 @@ const UpdateListing = () => {
                                         placeholder="Describe your property in detail..."
                                         required
                                     />
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Tell guests what makes your place special
+                                    </p>
                                 </div>
 
                                 {/* Place Type */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Place Type
+                                        Place Type*
                                     </label>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        {[
-                                            "Entire Place",
-                                            "Private Room",
-                                            "Shared Room",
-                                        ].map((type) => (
+                                        {["Entire Place", "Private Room", "Shared Room"].map((type) => (
                                             <label
                                                 key={type}
-                                                className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${formData.placeType === type ? "border-airbnb-pink bg-airbnb-pink bg-opacity-10" : "border-gray-200 hover:border-gray-300"}`}
+                                                className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                                                    formData.placeType === type
+                                                        ? "border-airbnb-pink bg-airbnb-pink bg-opacity-10"
+                                                        : "border-gray-200 hover:border-gray-300"
+                                                }`}
                                             >
                                                 <input
                                                     type="radio"
                                                     name="placeType"
                                                     value={type}
-                                                    checked={
-                                                        formData.placeType ===
-                                                        type
-                                                    }
+                                                    checked={formData.placeType === type}
                                                     onChange={handleChange}
                                                     className="h-5 w-5 text-airbnb-pink focus:ring-airbnb-pink mr-3"
                                                     required
                                                 />
                                                 <div>
-                                                    <span className="block font-medium">
-                                                        {type}
-                                                    </span>
+                                                    <span className="block font-medium">{type}</span>
                                                     <span className="block text-xs text-gray-500">
                                                         {type === "Entire Place"
                                                             ? "Guests have the whole place to themselves"
-                                                            : type ===
-                                                                "Private Room"
-                                                              ? "Guests have their own private room"
-                                                              : "Guests share common spaces with others"}
+                                                            : type === "Private Room"
+                                                            ? "Guests have their own private room"
+                                                            : "Guests share common spaces with others"}
                                                     </span>
                                                 </div>
                                             </label>
@@ -267,13 +345,11 @@ const UpdateListing = () => {
                                     {/* Price Per Night */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Price Per Night ($)
+                                            Price Per Night ($)*
                                         </label>
                                         <div className="relative">
                                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <span className="text-gray-500">
-                                                    $
-                                                </span>
+                                                <span className="text-gray-500">$</span>
                                             </div>
                                             <input
                                                 type="number"
@@ -283,6 +359,7 @@ const UpdateListing = () => {
                                                 className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-airbnb-pink focus:border-transparent"
                                                 placeholder="0.00"
                                                 min="1"
+                                                step="0.01"
                                                 required
                                             />
                                         </div>
@@ -296,12 +373,11 @@ const UpdateListing = () => {
                                     Accommodation Details
                                 </h2>
 
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                     {/* Max Guests */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                                            <FiUsers className="mr-1" /> Max
-                                            Guests
+                                            <FiUsers className="mr-1" /> Max Guests*
                                         </label>
                                         <input
                                             type="number"
@@ -317,7 +393,7 @@ const UpdateListing = () => {
                                     {/* Bedrooms */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Bedrooms
+                                            Bedrooms*
                                         </label>
                                         <input
                                             type="number"
@@ -333,7 +409,7 @@ const UpdateListing = () => {
                                     {/* Beds */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Beds
+                                            Beds*
                                         </label>
                                         <input
                                             type="number"
@@ -349,7 +425,7 @@ const UpdateListing = () => {
                                     {/* Bathrooms */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Bathrooms
+                                            Bathrooms*
                                         </label>
                                         <input
                                             type="number"
@@ -371,26 +447,26 @@ const UpdateListing = () => {
                                     Amenities
                                 </h2>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                     {amenitiesList.map((amenity) => (
                                         <label
                                             key={amenity.value}
-                                            className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${formData.amenities.includes(amenity.value) ? "border-airbnb-pink bg-airbnb-pink bg-opacity-10" : "border-gray-200 hover:border-gray-300"}`}
+                                            className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
+                                                formData.amenities.includes(amenity.value)
+                                                    ? "border-airbnb-pink bg-airbnb-pink bg-opacity-10"
+                                                    : "border-gray-200 hover:border-gray-300"
+                                            }`}
                                         >
                                             <input
                                                 type="checkbox"
                                                 name="amenities"
                                                 value={amenity.value}
-                                                checked={formData.amenities.includes(
-                                                    amenity.value
-                                                )}
+                                                checked={formData.amenities.includes(amenity.value)}
                                                 onChange={handleChange}
                                                 className="h-5 w-5 text-airbnb-pink focus:ring-airbnb-pink mr-3"
                                             />
                                             <div className="flex items-center">
-                                                <span className="text-lg mr-2">
-                                                    {amenity.icon}
-                                                </span>
+                                                <span className="text-lg mr-2">{amenity.icon}</span>
                                                 <span>{amenity.label}</span>
                                             </div>
                                         </label>
@@ -401,49 +477,52 @@ const UpdateListing = () => {
                             {/* Photos */}
                             <div className="space-y-6">
                                 <h2 className="text-xl font-semibold text-gray-700 border-b pb-2">
-                                    Photos
+                                    Photos*
                                 </h2>
+                                <p className="text-sm text-gray-500">
+                                    Upload high-quality photos to showcase your space (minimum 1, maximum 10)
+                                </p>
 
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                     {/* Existing Photos */}
-                                    {formData.photos.map((photo, index) =>
-                                        typeof photo === "string" ? (
-                                            <div
-                                                key={index}
-                                                className="relative group"
+                                    {formData.photos.map((photo, index) => (
+                                        <div key={index} className="relative group h-48">
+                                            <img
+                                                src={typeof photo === 'string' ? photo : URL.createObjectURL(photo)}
+                                                alt={`Listing ${index}`}
+                                                className="w-full h-full object-cover rounded-lg"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => removePhoto(index)}
+                                                className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                                             >
-                                                <img
-                                                    src={photo}
-                                                    alt={`Listing ${index}`}
-                                                    className="w-full h-32 object-cover rounded-lg"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        removePhoto(index)
-                                                    }
-                                                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                                >
-                                                    <FiTrash2 size={14} />
-                                                </button>
-                                            </div>
-                                        ) : null
-                                    )}
+                                                <FiTrash2 size={14} />
+                                            </button>
+                                        </div>
+                                    ))}
 
                                     {/* Upload New Photos */}
-                                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg h-32 cursor-pointer hover:border-airbnb-pink transition-colors">
-                                        <FiPlus className="text-gray-400 text-2xl mb-2" />
-                                        <span className="text-sm text-gray-500">
-                                            Add Photos
-                                        </span>
-                                        <input
-                                            type="file"
-                                            multiple
-                                            accept="image/*"
-                                            onChange={handlePhotoChange}
-                                            className="hidden"
-                                        />
-                                    </label>
+                                    {formData.photos.length < 10 && (
+                                        <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg h-48 cursor-pointer hover:border-airbnb-pink transition-colors">
+                                            <div className="text-center p-4">
+                                                <FiPlus className="text-gray-400 text-2xl mb-2 mx-auto" />
+                                                <span className="block text-sm text-gray-500">
+                                                    Add Photos
+                                                </span>
+                                                <span className="block text-xs text-gray-400 mt-1">
+                                                    JPEG, PNG (max 5MB each)
+                                                </span>
+                                            </div>
+                                            <input
+                                                type="file"
+                                                multiple
+                                                accept="image/jpeg, image/png, image/webp"
+                                                onChange={handlePhotoChange}
+                                                className="hidden"
+                                            />
+                                        </label>
+                                    )}
                                 </div>
                             </div>
 
@@ -469,49 +548,75 @@ const UpdateListing = () => {
                                         />
                                     </div>
 
-                                    {/* Category */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Category
-                                        </label>
-                                        <select
-                                            name="category"
-                                            value={formData.category}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-airbnb-pink focus:border-transparent"
-                                        >
-                                            <option value="">
-                                                Select a category
-                                            </option>
-                                            <option value="Beach">Beach</option>
-                                            <option value="Mountain">
-                                                Mountain
-                                            </option>
-                                            <option value="City">City</option>
-                                            <option value="Countryside">
-                                                Countryside
-                                            </option>
-                                            <option value="Lakefront">
-                                                Lakefront
-                                            </option>
-                                        </select>
+                                    <div className="space-y-4">
+                                        {/* Category */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Category
+                                            </label>
+                                            <select
+                                                name="category"
+                                                value={formData.category}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-airbnb-pink focus:border-transparent"
+                                            >
+                                                <option value="">Select a category</option>
+                                                <option value="Beach">Beach</option>
+                                                <option value="Mountain">Mountain</option>
+                                                <option value="City">City</option>
+                                                <option value="Countryside">Countryside</option>
+                                                <option value="Lakefront">Lakefront</option>
+                                                <option value="Cabin">Cabin</option>
+                                                <option value="Luxury">Luxury</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Tags */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Tags
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="tags"
+                                                value={formData.tags}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-airbnb-pink focus:border-transparent"
+                                                placeholder="family-friendly, pet-friendly, etc."
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Separate tags with commas
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Submit Button */}
-                            <div className="flex justify-end pt-6 border-t border-gray-200">
+                            <div className="flex justify-between pt-6 border-t border-gray-200">
+                                <button
+                                    type="button"
+                                    onClick={() => navigate(-1)}
+                                    className="px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+                                >
+                                    Cancel
+                                </button>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="px-6 py-3 bg-airbnb-pink text-white font-medium rounded-lg hover:bg-airbnb-pink-dark transition-colors flex items-center"
+                                    className="px-6 py-3 bg-airbnb-pink text-white font-medium rounded-lg hover:bg-airbnb-pink-dark transition-colors flex items-center disabled:opacity-70"
                                 >
                                     {loading ? (
-                                        "Saving..."
+                                        <>
+                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Saving...
+                                        </>
                                     ) : (
                                         <>
-                                            <FiEdit2 className="mr-2" /> Update
-                                            Listing
+                                            <FiEdit2 className="mr-2" /> Update Listing
                                         </>
                                     )}
                                 </button>
