@@ -13,6 +13,7 @@ import {
 } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import Footer from "../shared/Footer";
 
 const MyListing = () => {
     const [listings, setListings] = useState([]);
@@ -192,6 +193,7 @@ const MyListing = () => {
                         </div>
                     )}
                 </div>
+                <Footer />
             </div>
         </>
     );

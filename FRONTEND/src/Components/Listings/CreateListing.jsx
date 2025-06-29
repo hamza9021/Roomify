@@ -17,6 +17,7 @@ import { GiWoodenChair } from "react-icons/gi";
 
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CreateListing = () => {
     const [step, setStep] = useState(1);
@@ -38,6 +39,8 @@ const CreateListing = () => {
         category: "",
         photos: [],
     });
+
+    const navigate = useNavigate();
 
     const handleChange = (event) => {
         const { name, value, type, files } = event.target;
@@ -104,7 +107,7 @@ const CreateListing = () => {
                 }
             );
             setLoading(false);
-            console.log("Response:", response);
+            navigate("/host/listings");
             toast.success("Listing created successfully");
         } catch (error) {
             console.error("Error:", error);

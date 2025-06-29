@@ -7,6 +7,7 @@ import { FiHome, FiMapPin, FiUsers, FiDroplet, FiUmbrella, FiUser, FiPocket,
 import { MdKitchen, MdLocalParking, MdPool } from "react-icons/md";
 import { GiWoodenChair } from "react-icons/gi";
 import Navbar from "../shared/navbar";
+import Footer from "../shared/Footer.jsx";
 
 const UpdateListing = () => {
     const { id } = useParams();
@@ -624,6 +625,7 @@ const UpdateListing = () => {
                         </form>
                     </div>
                 </div>
+                <Footer />
             </div>
         </>
     );

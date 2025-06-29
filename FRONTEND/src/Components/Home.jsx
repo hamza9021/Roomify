@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "./shared/navbar";
-
+import Footer from "./shared/Footer";
 const Home = () => {
     const [listings, setListings] = useState([]);
 
@@ -132,6 +132,7 @@ const Home = () => {
                     </Link>
                 ))}
             </div>
+            <Footer />
         </>
     );
 };

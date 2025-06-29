@@ -6,7 +6,9 @@ import axios from "axios";
 const MyTrip = () => { 
 
     return (
-        <div>MyTrip</div>
+        <div>MyTrip
+            <Footer />
+        </div>
     )
 }
 

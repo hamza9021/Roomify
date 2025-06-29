@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateRangeCalendar } from '@mui/x-date-pickers-pro/DateRangeCalendar';
+import Footer from "../shared/Footer";
 
 import Navbar from "../shared/navbar";
 
@@ -809,6 +810,7 @@ const ListingDetail = () => {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 };
