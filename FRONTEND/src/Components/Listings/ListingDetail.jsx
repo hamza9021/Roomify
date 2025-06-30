@@ -445,7 +445,7 @@ const ListingDetail = () => {
           <section className="mb-12 pb-8 border-b border-gray-200">
             <h2 className="text-2xl font-semibold mb-6 flex items-center">
               <FiStar className="mr-2 text-rose-500" />
-              {listing.averageRating?.toFixed(1) || "New"} · {listing.reviews?.length || 0} reviews
+              {listing.rating?.averageRating?.toFixed(1) || listing.averageRating?.toFixed(1) || "New"} · {listing.reviews?.length || 0} reviews
             </h2>
 
             {/* Review Form */}
@@ -617,7 +617,7 @@ const ListingDetail = () => {
                 <div className="flex items-center">
                   <FiStar className="text-rose-500 mr-1" />
                   <span className="font-medium">
-                    {listing.averageRating?.toFixed(1) || "New"}
+                    {listing.rating?.averageRating?.toFixed(1) || listing.averageRating?.toFixed(1) || "New"}
                   </span>
                   <span className="text-gray-500 ml-1">
                     ({listing.reviews?.length || 0})

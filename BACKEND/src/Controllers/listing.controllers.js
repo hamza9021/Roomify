@@ -243,7 +243,6 @@ const updateListing = wrapperFunction(async (req, res) => {
 
 const getAllListings = wrapperFunction(async (req, res) => {
     const listings = await Listing.find();
-    console.log(listings);
     // const updatedListing = [];
 
     if (!listings) {
@@ -286,7 +285,6 @@ const getAllHostListings = wrapperFunction(async (req, res) => {
     if (!listings) {
         throw new ApiError(404, "No listings found");
     }
-    console.log(listings);
     return res
         .status(200)
         .json(new ApiResponse(200, listings, "Listings found"));
