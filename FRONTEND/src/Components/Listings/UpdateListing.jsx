@@ -6,7 +6,7 @@ import { FiHome, FiMapPin, FiUsers, FiDroplet, FiUmbrella, FiUser, FiPocket,
          FiAlertTriangle, FiPlus, FiThermometer, FiTv, FiWifi, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { MdKitchen, MdLocalParking, MdPool } from "react-icons/md";
 import { GiWoodenChair } from "react-icons/gi";
-import Navbar from "../shared/navbar";
+import Navbar from "../shared/Navbar";
 import Footer from "../shared/Footer.jsx";
 
 const UpdateListing = () => {

@@ -13,7 +13,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateRangeCalendar } from '@mui/x-date-pickers-pro/DateRangeCalendar';
 import Footer from "../shared/Footer";
 
-import Navbar from "../shared/navbar";
+import Navbar from "../shared/Navbar";
 
 // Icons
 import {

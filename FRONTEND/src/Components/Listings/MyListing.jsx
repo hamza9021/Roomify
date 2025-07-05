@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Navbar from "../shared/navbar";
+import Navbar from "../shared/Navbar";
 import {
     FiEdit,
     FiTrash2,

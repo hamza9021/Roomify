@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { CiWifiOn } from "react-icons/ci";
-import Navbar from "../shared/navbar";
+import Navbar from "../shared/Navbar";
 import { ClipLoader } from "react-spinners";
 import {
   FiDroplet, FiUmbrella, FiUser, FiPocket, FiAlertTriangle, 
