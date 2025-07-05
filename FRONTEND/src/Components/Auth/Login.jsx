@@ -30,7 +30,7 @@ const Login = () => {
         event.preventDefault();
         setLoading(true);
         try {
-            const response = await axios.post("/api/v1/users/login", formData);
+            const response = await axios.post("https://roomify-r4o0.onrender.com/api/v1/users/login", formData);
             toast.success(response.data.message);
             navigate("/");
         } catch (error) {

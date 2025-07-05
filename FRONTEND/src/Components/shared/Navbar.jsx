@@ -59,10 +59,10 @@ const Navbar = () => {
 
             const [userResponse, wishlistResponse] = await Promise.all([
                 axios
-                    .get("/api/v1/users/get/profile")
+                    .get("https://roomify-r4o0.onrender.com/api/v1/users/get/profile")
                     .catch(() => ({ data: { data: null } })),
                 axios
-                    .get("/api/v1/wishlist")
+                    .get("https://roomify-r4o0.onrender.com/api/v1/wishlist")
                     .catch(() => ({ data: { data: { listings: [] } } })),
             ]);
 
@@ -90,13 +90,13 @@ const Navbar = () => {
                 prev.filter((item) => item._id !== listingId)
             );
 
-            await axios.delete(`/api/v1/wishlist/${listingId}`);
+            await axios.delete(`https://roomify-r4o0.onrender.com/api/v1/wishlist/${listingId}`);
             toast.success("Removed from wishlist");
 
-            const refreshResponse = await axios.get("/api/v1/wishlist");
+            const refreshResponse = await axios.get("https://roomify-r4o0.onrender.com/api/v1/wishlist");
             setWishlist(refreshResponse.data.data.listings || []);
         } catch (error) {
-            const refreshResponse = await axios.get("/api/v1/wishlist");
+            const refreshResponse = await axios.get("https://roomify-r4o0.onrender.com/api/v1/wishlist");
             setWishlist(refreshResponse.data.data.listings || []);
 
             toast.error(
