@@ -85,7 +85,7 @@ const Home = () => {
                                             {listing.title}
                                         </h3>
                                         <p className="text-gray-500 text-sm mt-1">
-                                            {listing.location}
+                                            {listing.location.address}
                                         </p>
                                     </div>
                                     <div className="flex items-center">

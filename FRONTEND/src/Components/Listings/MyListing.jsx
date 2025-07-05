@@ -139,7 +139,7 @@ const MyListing = () => {
                                                 size={14}
                                             />
                                             <span className="truncate">
-                                                {listing.location}
+                                                {listing.location.address}
                                             </span>
                                         </div>
 

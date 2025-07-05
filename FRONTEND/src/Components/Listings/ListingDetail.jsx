@@ -167,15 +167,15 @@ const ListingDetail = () => {
       container: mapContainer.current,
       style: maptilersdk.MapStyle.STREETS,
       center: [
-        listing.longitude || 16.62662018,
-        listing.latitude || 49.2125578,
+        listing.location.coordinates.longitude || 16.62662018,
+        listing.location.coordinates.latitude || 49.2125578,
       ],
       zoom: 14,
     });
 
-    if (listing.longitude && listing.latitude) {
+    if (listing.location.coordinates.latitude && listing.location.coordinates.longitude) {
       new maptilersdk.Marker({ color: "#FF0000" })
-        .setLngLat([listing.longitude, listing.latitude])
+        .setLngLat([listing.location.coordinates.longitude, listing.location.coordinates.latitude])
         .addTo(map.current);
     }
 
@@ -350,7 +350,7 @@ const ListingDetail = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{listing.title}</h1>
           <div className="flex items-center mt-2 text-gray-600">
             <FiMapPin className="w-5 h-5 mr-2" />
-            <span className="text-lg">{listing.location}</span>
+            <span className="text-lg">{listing.location.address}</span>
           </div>
         </div>
         <button 
@@ -602,7 +602,7 @@ const ListingDetail = () => {
               ref={mapContainer}
               className="w-full h-96 rounded-xl overflow-hidden"
             />
-            <p className="mt-4 text-gray-700">{listing.location}</p>
+            <p className="mt-4 text-gray-700">{listing.location.address}</p>
           </section>
         </div>
 

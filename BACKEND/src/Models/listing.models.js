@@ -23,8 +23,8 @@ const listingSchema = new mongoose.Schema(
             country: String,
             zipCode: String,
             coordinates: {
-                latitude: Number,
-                longitude: Number,
+                latitude: { type: Number },
+                longitude: { type: Number },
             },
         },
         pricePerNight: {
