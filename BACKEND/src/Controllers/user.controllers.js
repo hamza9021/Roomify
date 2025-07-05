@@ -73,14 +73,13 @@ const loginUser = wrapperFunction(async (req, res) => {
         "-password -refreshToken"
     );
 
-    const url = new URL("https://roomify-crs5.vercel.app/");
-    const domain = url.hostname.replace(/^www\./, "");
     const cookieOptions = {
         httpOnly: true,
         secure: true,
         sameSite: "none",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
-        domain: "." + domain
+        domain: ".onrender.com", // Tried both with/without leading dot
+        path: "/",
     };
 
     return res
@@ -112,16 +111,16 @@ const getUserProfile = wrapperFunction(async (req, res) => {
             populate: [
                 {
                     path: "sender",
-                    select: "name profilePicture"
+                    select: "name profilePicture",
                 },
                 {
                     path: "receiver",
-                    select: "name profilePicture"
-                }
-            ]
+                    select: "name profilePicture",
+                },
+            ],
         })
         .select("-password -refreshToken");
-    
+
     if (!user) {
         throw new ApiError(404, "User Not Found");
     }
