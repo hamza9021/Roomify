@@ -73,9 +73,14 @@ const loginUser = wrapperFunction(async (req, res) => {
         "-password -refreshToken"
     );
 
+    const url = new URL("https://roomify-crs5.vercel.app/");
+    const domain = url.hostname.replace(/^www\./, "");
     const cookieOptions = {
         httpOnly: true,
         secure: true,
+        sameSite: "none",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        domain: "." + domain
     };
 
     return res
