@@ -32,7 +32,7 @@ const Login = () => {
         try {
             const response = await axios.post("https://roomify-r4o0.onrender.com/api/v1/users/login", formData);
             toast.success(response.data.message);
-            navigate("/");
+            navigate("/login");
         } catch (error) {
             toast.error(error.response?.data?.message || "Login failed");
         } finally {
