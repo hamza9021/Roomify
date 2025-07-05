@@ -14,7 +14,7 @@ import { authRouter } from "./Routes/auth.routes.js";
 import { bookingRouter } from "./Routes/booking.routes.js";
 import "./Services/passport.js";
 
-
+app.set('trust proxy', 1);
 const allowedOrigins = [
   "https://roomify-crs5.vercel.app",
   "http://localhost:3000"
