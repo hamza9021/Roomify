@@ -35,7 +35,10 @@ const createListing = wrapperFunction(async (req, res) => {
         "image/png",
         "image/gif",
         "application/pdf",
+        "image/avif",
+        "image/webp",
     ];
+
     const maxSize = 5 * 1024 * 1024;
 
     for (const photo of photos) {
@@ -157,7 +160,7 @@ const updateListing = wrapperFunction(async (req, res) => {
         policies,
         tags,
         category,
-        existingPhotos = [] // Add this to handle existing photos
+        existingPhotos = [], // Add this to handle existing photos
     } = req.body;
 
     // Validate required fields
@@ -166,7 +169,9 @@ const updateListing = wrapperFunction(async (req, res) => {
     }
 
     // Handle photo updates
-    let photoUrls = Array.isArray(existingPhotos) ? [...existingPhotos] : [existingPhotos];
+    let photoUrls = Array.isArray(existingPhotos)
+        ? [...existingPhotos]
+        : [existingPhotos];
     const newPhotos = req.files?.photos || [];
 
     // Validate at least one photo exists
@@ -224,9 +229,13 @@ const updateListing = wrapperFunction(async (req, res) => {
             rooms: parseInt(rooms),
             beds: parseInt(beds),
             bathrooms: parseFloat(bathrooms),
-            amenities: Array.isArray(amenities) ? amenities : [amenities].filter(Boolean),
+            amenities: Array.isArray(amenities)
+                ? amenities
+                : [amenities].filter(Boolean),
             photos: photoUrls,
-            unavailableDates: Array.isArray(unavailableDates) ? unavailableDates : [unavailableDates].filter(Boolean),
+            unavailableDates: Array.isArray(unavailableDates)
+                ? unavailableDates
+                : [unavailableDates].filter(Boolean),
             policies,
             tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
             category,
