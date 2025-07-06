@@ -10,7 +10,7 @@ const Logout = () => {
         const handleLogout = async () => {
             try {
                 const response = await axios.post(
-                    "https://roomify-r4o0.onrender.com/api/v1/users/logout"
+                    "/api/v1/users/logout"
                 );
                 if (response) {
                     toast.success(response.data.message);

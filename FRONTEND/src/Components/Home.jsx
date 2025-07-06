@@ -10,7 +10,7 @@ const Home = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`https://roomify-r4o0.onrender.com/api/v1/listings`);
+                const response = await axios.get(`/api/v1/listings`);
                 if (!response.data || !response.data.data) {
                     throw new Error("No data received from server");
                 }
@@ -31,7 +31,7 @@ const Home = () => {
         e.preventDefault();
         const listingId = e.currentTarget.getAttribute("data-listing-id");
         try {
-            const response = await axios.post(`https://roomify-r4o0.onrender.com/api/v1/wishlist/${listingId}`);
+            const response = await axios.post(`/api/v1/wishlist/${listingId}`);
             toast.success("Added to wishlist successfully");
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);

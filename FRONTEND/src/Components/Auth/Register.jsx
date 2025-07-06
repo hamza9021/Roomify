@@ -70,7 +70,7 @@ const Register = () => {
         form.append("profileImage", formData.profileImage);
 
         try {
-            const response = await axios.post("https://roomify-r4o0.onrender.com/api/v1/users/register", form, {
+            const response = await axios.post("/api/v1/users/register", form, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
