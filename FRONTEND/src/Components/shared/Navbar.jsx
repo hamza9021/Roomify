@@ -231,7 +231,7 @@ const Navbar = () => {
                                                         {item.title}
                                                     </span>
                                                     <span className="text-xs text-gray-500 truncate">
-                                                        {item.location}
+                                                        {item.location.address}
                                                     </span>
                                                     <span className="text-xs font-semibold text-rose-500 mt-1">
                                                         $
