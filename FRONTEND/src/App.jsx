@@ -57,8 +57,8 @@ const appRouter = createBrowserRouter([
         element: <UpdateListing />,
     },
     {
-        path: "trips",
-        element: <MyTrip />,
+        path: "/search",
+        element: <Home />,
     }
 ]);
 

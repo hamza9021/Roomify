@@ -299,6 +299,58 @@ const getAllHostListings = wrapperFunction(async (req, res) => {
         .json(new ApiResponse(200, listings, "Listings found"));
 });
 
+const searchListings = wrapperFunction(async (req, res) => {
+    const { query } = req;
+    const searchCriteria = {};
+
+    // Title search
+    if (query.title) {
+        searchCriteria.title = { $regex: query.title, $options: "i" };
+    }
+
+    // Place type filter
+    if (query.placeType) {
+        searchCriteria.placeType = query.placeType;
+    }
+
+    // Location filters
+    if (query.address) {
+        searchCriteria['location.address'] = { $regex: query.address, $options: "i" };
+    }
+    if (query.city) {
+        searchCriteria['location.city'] = { $regex: query.city, $options: "i" };
+    }
+    if (query.state) {
+        searchCriteria['location.state'] = { $regex: query.state, $options: "i" };
+    }
+    if (query.country) {
+        searchCriteria['location.country'] = { $regex: query.country, $options: "i" };
+    }
+
+    // Price filter
+    if (query.pricePerNight) {
+        searchCriteria.pricePerNight = {
+            $lte: parseFloat(query.pricePerNight),
+        };
+    }
+
+    // Capacity filter
+    if (query.maxGuests) {
+        searchCriteria.maxGuests = { $gte: parseInt(query.maxGuests) };
+    }
+
+    console.log("Search criteria:", searchCriteria);
+    const listings = await Listing.find(searchCriteria);
+
+    if (!listings || listings.length === 0) {
+        throw new ApiError(404, "No listings found matching the criteria");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, listings, "Listings found"));
+});
+
 export {
     createListing,
     deleteListing,
@@ -306,4 +358,5 @@ export {
     getListing,
     getAllListings,
     getAllHostListings,
+    searchListings,
 };
