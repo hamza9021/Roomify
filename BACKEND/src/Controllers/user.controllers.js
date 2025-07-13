@@ -77,8 +77,8 @@ const loginUser = wrapperFunction(async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
-        domain: ".onrender.com", // Tried both with/without leading dot
+        maxAge: 24 * 60 * 60 * 1000, 
+        domain: ".onrender.com", 
         path: "/",
     };
 
