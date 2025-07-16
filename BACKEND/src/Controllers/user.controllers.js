@@ -99,7 +99,15 @@ const logoutUser = wrapperFunction(async (req, res) => {
         { new: true }
     );
 
-    const cookieOptions = { httpOnly: true, secure: true };
+    // const cookieOptions = { httpOnly: true, secure: true };
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: "/",
+        
+    };
+
     res.status(200)
         .clearCookie("accessToken", cookieOptions)
         .clearCookie("refreshToken", cookieOptions)

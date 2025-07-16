@@ -13,6 +13,9 @@ const Logout = () => {
                 const response = await axiosInstance.post(
                     "/api/v1/users/logout"
                 );
+                // can use just in case user can log out because of bacend error
+                //   document.cookie = 'accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                // document.cookie = 'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                 if (response) {
                     toast.success(response.data.message);
                     navigate("/");
