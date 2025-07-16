@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
 
 // axiosInstance.defaults.withCredentials = true;
 axiosInstance.defaults.headers.common["Content-Type"] = "application/json";
-(axiosInstance.defaults.headers = { "x-platform": "web" }),
+// (axiosInstance.defaults.headers = { "x-platform": "web" }),
   axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
