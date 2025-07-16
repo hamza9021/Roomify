@@ -11,7 +11,7 @@ const registerUser = wrapperFunction(async (req, res) => {
         throw new ApiError(400, "Please fill all the fields");
     }
 
-    if (await User.findOne({ $or: [{ name }, { email }] })) {
+    if (await User.findOne({ $or: [{ phoneNumber }, { email }] })) {
         throw new ApiError(409, "User Already Exists");
     }
 
