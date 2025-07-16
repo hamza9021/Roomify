@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Link, useSearchParams } from "react-router-dom";
-import axios from "axios";
+
 import Navbar from "./shared/Navbar";
 import Footer from "./shared/Footer";
+import axiosInstance from "../utils/axios.instance";
 
 const Home = () => {
     const [listings, setListings] = useState([]);
@@ -31,7 +32,7 @@ const Home = () => {
                 const endpoint = hasSearchParams
                     ? "/api/v1/listings/search"
                     : "/api/v1/listings";
-                const { data } = await axios.get(endpoint, { params });
+                const { data } = await axiosInstance.get(endpoint, { params });
 
                 if (!data?.data) {
                     throw new Error("No data received from server");
@@ -53,7 +54,7 @@ const Home = () => {
         e.preventDefault();
         e.stopPropagation();
         try {
-            await axios.post(`/api/v1/wishlist/${listingId}`);
+            await axiosInstance.post(`/api/v1/wishlist/${listingId}`);
             toast.success("Added to wishlist successfully");
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);

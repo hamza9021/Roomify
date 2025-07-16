@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 import { HiUser, HiHome, HiLockClosed, HiCamera } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utils/axios.instance";
 
 const UpdateUser = () => {
 
@@ -41,7 +42,7 @@ const UpdateUser = () => {
         }
 
         try {
-            const response = await axios.patch(
+            const response = await axiosInstance.patch(
                 "/api/v1/users/update/profile",
                 updateUser
             );
@@ -71,7 +72,7 @@ const UpdateUser = () => {
         formData.append("profileImage", file);
 
         try {
-            const response = await axios.patch(
+            const response = await axiosInstance.patch(
                 "/api/v1/users/update/profile/image",
                 formData
             );
@@ -92,7 +93,7 @@ const UpdateUser = () => {
         }
 
         try {
-            const response = await axios.patch(
+            const response = await axiosInstance.patch(
                 "/api/v1/users/update/password",
                 password
             );
@@ -113,7 +114,7 @@ const UpdateUser = () => {
 
     const getUser = async () => {
         try {
-            const response = await axios.get(
+            const response = await axiosInstance.get(
                 "/api/v1/users/get/profile"
             );
             setUpdateUser(response.data.data);

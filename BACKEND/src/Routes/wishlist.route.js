@@ -13,4 +13,5 @@ wishListRouter
     .post(verifyJWT, addToWishList)
     .delete(verifyJWT, removeFromWishList);
 
+    
 export { wishListRouter };

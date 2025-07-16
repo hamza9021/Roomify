@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+
 import { ClipLoader } from "react-spinners";
 import toast from "react-hot-toast";
 import { FiPaperclip, FiSend, FiX, FiZoomIn } from "react-icons/fi";
+import axiosInstance from "../../utils/axios.instance";
 
 const Messages = () => {
     const [loading, setLoading] = useState(true);
@@ -21,7 +22,7 @@ const Messages = () => {
         const fetchConversationPartners = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(
+                const response = await axiosInstance.get(
                     "/api/v1/messages/conversation-partners"
                 );
                 setConversationPartners(response.data.data);
@@ -42,7 +43,7 @@ const Messages = () => {
             const fetchMessages = async () => {
                 try {
                     setLoading(true);
-                    const response = await axios.get(
+                    const response = await axiosInstance.get(
                         `/api/v1/messages/${selectedPartner._id}/get-messages`
                     );
                     setMessages(response.data.data.reverse());
@@ -90,7 +91,7 @@ const Messages = () => {
 
             // Send text message if content exists
             if (content.trim()) {
-                const textResponse = await axios.post(
+                const textResponse = await axiosInstance.post(
                     `/api/v1/messages/${selectedPartner._id}/create-message-with-text`,
                     { content }
                 );
@@ -104,7 +105,7 @@ const Messages = () => {
                     formData.append("attachments", file);
                 });
 
-                const fileResponse = await axios.post(
+                const fileResponse = await axiosInstance.post(
                     `/api/v1/messages/${selectedPartner._id}/create-message-with-file`,
                     formData,
                     { headers: { "Content-Type": "multipart/form-data" } }

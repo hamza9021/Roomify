@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
+
 import { ClipLoader } from "react-spinners";
 import {
     HiUser,
@@ -13,6 +13,7 @@ import {
 } from "react-icons/hi";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import axiosInstance from "../../utils/axios.instance";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -70,7 +71,7 @@ const Register = () => {
         form.append("profileImage", formData.profileImage);
 
         try {
-            const response = await axios.post("/api/v1/users/register", form, {
+            const response = await axiosInstance.post("/api/v1/users/register", form, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -87,7 +88,7 @@ const Register = () => {
     const handleOAuthGoogle = async () => {
         try {
             setGoogleLoading(true);
-            window.location.href = "http://localhost:8080/auth/google";
+            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/google`;
         } catch (error) {
             toast.error(error.response?.data?.message || "Google login failed");
             setGoogleLoading(false);
@@ -97,7 +98,7 @@ const Register = () => {
     const handleOAuthGithub = async () => {
         try {
             setGithubLoading(true);
-            window.location.href = "http://localhost:8080/auth/github";
+            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/github`;
         } catch (error) {
             toast.error(error.response?.data?.message || "GitHub login failed");
             setGithubLoading(false);

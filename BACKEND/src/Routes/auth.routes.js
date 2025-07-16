@@ -23,16 +23,16 @@ authRouter.get(
         res.cookie("accessToken", req.user.tokens.jwtAccessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: process.env.NODE_ENV === "production" && "lax",
         });
 
         res.cookie("refreshToken", req.user.tokens.jwtRefreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: process.env.NODE_ENV === "production" && "lax",
         });
 
-        res.redirect("http://localhost:5173/");
+        res.redirect(process.env.CORS_ORIGIN);
     }
 );
 
@@ -56,21 +56,21 @@ authRouter.get(
         res.cookie("accessToken", req.user.tokens.jwtAccessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: process.env.NODE_ENV === "production" && "lax",
         });
 
         res.cookie("refreshToken", req.user.tokens.jwtRefreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: process.env.NODE_ENV === "production" && "lax",
         });
 
-        res.redirect("http://localhost:5173/");
+        res.redirect(process.env.CORS_ORIGIN);
     }
 );
 
 authRouter.get("/failure", (req, res) => {
-    res.redirect("http://localhost:5173/login");
+    res.redirect(`${process.env.CORS_ORIGIN}/login`);
 });
 
 export { authRouter };

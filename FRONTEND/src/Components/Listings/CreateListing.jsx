@@ -22,10 +22,11 @@ import {
 import { IoIosSnow, IoIosBoat } from "react-icons/io";
 import { TbBeach, TbWindmill } from "react-icons/tb";
 import toast from "react-hot-toast";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import * as maptilersdk from '@maptiler/sdk';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
+import axiosInstance from "../../utils/axios.instance";
 
 // Set up MapTiler SDK
 maptilersdk.config.apiKey = 'JYHKuYzUBYh2Mj4qck6S';
@@ -310,7 +311,7 @@ const CreateListing = () => {
     try {
       setLoading(true);
       
-      await axios.post(
+      await axiosInstance.post(
         "/api/v1/listings/create-listing",
         form,
         { headers: { "Content-Type": "multipart/form-data" } }

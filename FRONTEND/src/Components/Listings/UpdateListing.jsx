@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { FiHome, FiMapPin, FiUsers, FiDroplet, FiUmbrella, FiUser, FiPocket, 
@@ -8,6 +8,7 @@ import { MdKitchen, MdLocalParking, MdPool } from "react-icons/md";
 import { GiWoodenChair } from "react-icons/gi";
 import Navbar from "../shared/Navbar";
 import Footer from "../shared/Footer.jsx";
+import axiosInstance from "../../utils/axios.instance.js";
 
 const UpdateListing = () => {
     const { id } = useParams();
@@ -36,7 +37,7 @@ const UpdateListing = () => {
         const fetchListing = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`/api/v1/listings/${id}`);
+                const response = await axiosInstance.get(`/api/v1/listings/${id}`);
                 if (isMounted) {
                     const listing = response.data.data;
                     
@@ -170,7 +171,7 @@ const UpdateListing = () => {
             // Append new photos
             newPhotos.forEach(photo => form.append('photos', photo));
             
-            const response = await axios.patch(
+            const response = await axiosInstance.patch(
                 `/api/v1/listings/${id}/update-listing`,
                 form,
                 {

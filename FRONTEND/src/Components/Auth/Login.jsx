@@ -1,11 +1,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import axios from "axios";
+
 import { ClipLoader } from "react-spinners";
 import { useNavigate, Link } from "react-router-dom";
 import { HiMail, HiLockClosed } from "react-icons/hi";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import axiosInstance from "../../utils/axios.instance";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -30,9 +31,9 @@ const Login = () => {
         event.preventDefault();
         setLoading(true);
         try {
-            const response = await axios.post("/api/v1/users/login", formData);
+            const response = await axiosInstance.post("/api/v1/users/login", formData);
             toast.success(response.data.message);
-            navigate("/login");
+            navigate("/");
         } catch (error) {
             toast.error(error.response?.data?.message || "Login failed");
         } finally {
@@ -43,7 +44,7 @@ const Login = () => {
     const handleOAuthGoogle = async () => {
         try {
             setGoogleLoading(true);
-            window.location.href = "http://localhost:8080/auth/google";
+            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/google`;
         } catch (error) {
             toast.error(error.response?.data?.message || "Google login failed");
             setGoogleLoading(false);
@@ -53,7 +54,7 @@ const Login = () => {
     const handleOAuthGithub = async () => {
         try {
             setGithubLoading(true);
-            window.location.href = "http://localhost:8080/auth/github";
+            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/github`;
         } catch (error) {
             toast.error(error.response?.data?.message || "GitHub login failed");
             setGithubLoading(false);

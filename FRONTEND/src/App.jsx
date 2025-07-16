@@ -15,6 +15,60 @@ import {
 } from "./Components";
 import { Toaster } from "react-hot-toast";
 
+// bruh where is Protect Route
+// do this yourself. 
+// use zustand light weight for your usecase now  for state management
+
+// EXAMPLE----------
+
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <ProtectedLayout />, // Wraps all protected routes
+//     children: [
+//       // Public routes
+//       { path: "login", element: <Login /> },
+//       { path: "signup", element: <SignUp /> },
+      
+//       // Protected but role-neutral
+//       { index: true, element: <Home /> },
+      
+//       // Student-only routes
+//       {
+//         element: <RoleBasedRoute allowedRoles={['student']} />,
+//         children: [
+//           { path: "courses", element: <Courses /> }
+//         ]
+//       },
+      
+//       // Admin-only routes
+//       {
+//         element: <RoleBasedRoute allowedRoles={['admin']} />,
+//         children: [
+//           { path: "dashboard", element: <AdminDashboard /> }
+//         ]
+//       },
+      
+//       // Fallbacks
+//       { path: "unauthorized", element: <Unauthorized /> },
+//       { path: "*", element: <Navigate to="/" replace /> }
+//     ]
+//   }
+// ])
+
+
+// PROTECT ROUTE LOOKSLIEK 
+
+// export default function ProtectedLayout() {
+//   const { user, loading } = useAuthContext() // create a auth context wrap react roter wiht it 
+  
+//   if (loading) return <div>Loading...</div>
+//   if (!user) return <Navigate to="/login" replace /> //? you cant acess routes until logged in
+  
+//   return <Outlet /> // ? you can access routes limited by auth
+// }
+
+
 const appRouter = createBrowserRouter([
     {
         path: "/",
