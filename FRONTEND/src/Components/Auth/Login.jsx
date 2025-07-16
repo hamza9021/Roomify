@@ -33,7 +33,7 @@ const Login = () => {
         try {
             const response = await axiosInstance.post("/api/v1/users/login", formData);
             toast.success(response.data.message);
-            navigate("/login");
+            navigate("/");
         } catch (error) {
             toast.error(error.response?.data?.message || "Login failed");
         } finally {
