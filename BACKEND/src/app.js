@@ -10,7 +10,7 @@ import { listingRouter } from "./Routes/listing.routes.js";
 import { reviewRouter } from "./Routes/review.routes.js";
 import { messageRouter } from "./Routes/message.routes.js";
 import { authRouter } from "./Routes/auth.routes.js";
-import { wishListRouter } from "./Routes/wishlist.routes.js";
+import { wishListRouter } from "./Routes/wishlist.route.js";
 import { bookingRouter } from "./Routes/booking.routes.js";
 import "./Services/passport.js";
 
