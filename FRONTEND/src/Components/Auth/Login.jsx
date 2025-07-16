@@ -43,7 +43,7 @@ const Login = () => {
     const handleOAuthGoogle = async () => {
         try {
             setGoogleLoading(true);
-            window.location.href = "http://localhost:8080/auth/google";
+            window.location.href = "https://roomify-mg6m.onrender.com/auth/google";
         } catch (error) {
             toast.error(error.response?.data?.message || "Google login failed");
             setGoogleLoading(false);
