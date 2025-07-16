@@ -22,14 +22,18 @@ authRouter.get(
     (req, res) => {
         res.cookie("accessToken", req.user.tokens.jwtAccessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" && "lax",
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000,
+             path: "/",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         });
 
         res.cookie("refreshToken", req.user.tokens.jwtRefreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" && "lax",
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000,
+             path: "/",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         });
 
         res.redirect(process.env.CORS_ORIGIN);
@@ -55,14 +59,18 @@ authRouter.get(
         // Same token handling as Google
         res.cookie("accessToken", req.user.tokens.jwtAccessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" && "lax",
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000,
+             path: "/",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         });
 
         res.cookie("refreshToken", req.user.tokens.jwtRefreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" && "lax",
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000,
+             path: "/",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         });
 
         res.redirect(process.env.CORS_ORIGIN);
