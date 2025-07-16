@@ -20,27 +20,27 @@ import "./Services/passport.js";
 
 
 app.set("trust proxy", 1);
-const sessionData = session({
-  name: "accessToken",
-  secret: process.env.ACCESS_TOKEN_SECRET || "default_secret",
-  resave: process.env.RESAVE === "true",
-  saveUninitialized: process.env.SAVE_UNINTIALIZED === "true", // should be false otherwise empty sessions wil be stored in database
-  cookie: {
-    maxAge: 140 * 24 * 60 * 60 * 1000, // 140 days
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // true if HTTPS in production
-    sameSite: process.env.NODE_ENV === "production" && "lax",
-    domain: process.env.COOKIE_DOMAIN || undefined,
-  },
-  rolling: process.env.ROLLING === "true",
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URL,
-    collectionName: "user-sessions",
-    ttl: 14 * 24 * 60 * 60, // 14 days
-  }),
-});
+// const sessionData = session({
+//   name: "accessToken",
+//   secret: process.env.ACCESS_TOKEN_SECRET || "default_secret",
+//   resave: process.env.RESAVE === "true",
+//   saveUninitialized: process.env.SAVE_UNINTIALIZED === "true", // should be false otherwise empty sessions wil be stored in database
+//   cookie: {
+//     maxAge: 140 * 24 * 60 * 60 * 1000, // 140 days
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === "production", // true if HTTPS in production
+//     sameSite: process.env.NODE_ENV === "production" && "lax",
+//     domain: process.env.COOKIE_DOMAIN || undefined,
+//   },
+//   rolling: process.env.ROLLING === "true",
+//   store: MongoStore.create({
+//     mongoUrl: process.env.MONGODB_URL,
+//     collectionName: "user-sessions",
+//     ttl: 14 * 24 * 60 * 60, // 14 days
+//   }),
+// });
 
-app.use(sessionData);
+// app.use(sessionData);
 
 
 const corsOptions = {
@@ -56,7 +56,7 @@ app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 app.use(cookieParser());
 app.use(express.static("./public"));
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 // Routes
 app.use("/auth", authRouter);
