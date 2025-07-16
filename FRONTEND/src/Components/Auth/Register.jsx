@@ -88,7 +88,7 @@ const Register = () => {
     const handleOAuthGoogle = async () => {
         try {
             setGoogleLoading(true);
-            window.location.href = "http://localhost:8080/auth/google";
+            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/google`;
         } catch (error) {
             toast.error(error.response?.data?.message || "Google login failed");
             setGoogleLoading(false);
@@ -98,7 +98,7 @@ const Register = () => {
     const handleOAuthGithub = async () => {
         try {
             setGithubLoading(true);
-            window.location.href = "http://localhost:8080/auth/github";
+            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/github`;
         } catch (error) {
             toast.error(error.response?.data?.message || "GitHub login failed");
             setGithubLoading(false);

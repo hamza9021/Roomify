@@ -44,7 +44,7 @@ const Login = () => {
     const handleOAuthGoogle = async () => {
         try {
             setGoogleLoading(true);
-            window.location.href = "https://roomify-mg6m.onrender.com/auth/google";
+            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/google`;
         } catch (error) {
             toast.error(error.response?.data?.message || "Google login failed");
             setGoogleLoading(false);
@@ -54,7 +54,7 @@ const Login = () => {
     const handleOAuthGithub = async () => {
         try {
             setGithubLoading(true);
-            window.location.href = "http://localhost:8080/auth/github";
+            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/github`;
         } catch (error) {
             toast.error(error.response?.data?.message || "GitHub login failed");
             setGithubLoading(false);
