@@ -76,10 +76,10 @@ const loginUser = wrapperFunction(async (req, res) => {
     const cookieOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: process.env.NODE_ENV === "production" && "lax",
         maxAge: 24 * 60 * 60 * 1000, 
-        domain: ".onrender.com", 
-        path: "/",
+        // domain: ".onrender.com", 
+        // path: "/",
     };
 
     return res
