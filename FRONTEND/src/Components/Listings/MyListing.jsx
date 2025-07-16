@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { useEffect, useState } from "react";
 import Navbar from "../shared/Navbar";
 import {
@@ -14,6 +14,7 @@ import {
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import Footer from "../shared/Footer";
+import axiosInstance from "../../utils/axios.instance";
 
 const MyListing = () => {
     const [listings, setListings] = useState([]);
@@ -21,7 +22,7 @@ const MyListing = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(
+                const response = await axiosInstance.get(
                     "/api/v1/listings/host/listings"
                 );
                 setListings(response.data.data);
@@ -35,7 +36,7 @@ const MyListing = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`/api/v1/listings/${id}/delete-listing`);
+            await axiosInstance.delete(`/api/v1/listings/${id}/delete-listing`);
             setListings(listings.filter((listing) => listing._id !== id));
             toast.success("Listing deleted successfully");
         } catch (error) {

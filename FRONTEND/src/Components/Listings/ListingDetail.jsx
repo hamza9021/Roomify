@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
+
 import toast from "react-hot-toast";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import * as maptilersdk from "@maptiler/sdk";
@@ -40,6 +40,7 @@ import {
 import { MdKitchen, MdLocalParking, MdPool } from "react-icons/md";
 import { GiWoodenChair } from "react-icons/gi";
 import { CiWifiOn } from "react-icons/ci";
+import axiosInstance from "../../utils/axios.instance";
 
 function DateRangeCalendarValue({ onChange, initialStartDate, initialEndDate }) {
   const [value, setValue] = React.useState([
@@ -128,7 +129,7 @@ const ListingDetail = () => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const response = await axios.get("/api/v1/users/get/profile");
+        const response = await axiosInstance.get("/api/v1/users/get/profile");
         setUser(response.data.data);
       } catch (error) {
         console.error("Error fetching current user:", error);
@@ -142,7 +143,7 @@ const ListingDetail = () => {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/v1/listings/${id}`);
+        const response = await axiosInstance.get(`/api/v1/listings/${id}`);
         if (!response.data) {
           toast.error("No data received from server");
           return;
@@ -238,7 +239,7 @@ const ListingDetail = () => {
   };
   const handleReserveButton = async () =>{
     try {
-      const response = await axios.post(`/api/v1/booking/${id}/create-booking`, { checkInDate:selectedDates.startDate, checkOutDate:selectedDates.endDate, Guests:guests , totalPrice:calculateTotalPrice() });
+      const response = await axiosInstance.post(`/api/v1/booking/${id}/create-booking`, { checkInDate:selectedDates.startDate, checkOutDate:selectedDates.endDate, Guests:guests , totalPrice:calculateTotalPrice() });
       toast.success("Booking created successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -253,7 +254,7 @@ const ListingDetail = () => {
 
     setReviewLoading(true);
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `/api/v1/reviews/${id}/create-review`,
         { rating, comment }
       );
@@ -261,7 +262,7 @@ const ListingDetail = () => {
         toast.success("Review submitted successfully");
         setComment("");
         setRating(5);
-        const updatedListing = await axios.get(`/api/v1/listings/${id}`);
+        const updatedListing = await axiosInstance.get(`/api/v1/listings/${id}`);
         setListing(updatedListing.data.data);
       }
     } catch (error) {
@@ -274,9 +275,9 @@ const ListingDetail = () => {
   const handleDeleteReview = async (reviewId) => {
     setReviewLoading(true);
     try {
-      await axios.delete(`/api/v1/reviews/${id}/${reviewId}/delete-review`);
+      await axiosInstance.delete(`/api/v1/reviews/${id}/${reviewId}/delete-review`);
       toast.success("Review deleted successfully");
-      const updatedListing = await axios.get(`/api/v1/listings/${id}`);
+      const updatedListing = await axiosInstance.get(`/api/v1/listings/${id}`);
       setListing(updatedListing.data.data);
       setShowDeleteConfirm(null);
     } catch (error) {

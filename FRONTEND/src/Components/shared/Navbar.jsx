@@ -15,8 +15,9 @@ import {
     FaUserPlus,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import toast from "react-hot-toast";
+import axiosInstance from "../../utils/axios.instance";
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -67,8 +68,8 @@ const Navbar = () => {
             setLoading((prev) => ({ ...prev, user: true, wishlist: true }));
 
             const [userResponse, wishlistResponse] = await Promise.all([
-                axios.get("/api/v1/users/get/profile").catch(() => ({ data: { data: null } })),
-                axios.get("/api/v1/wishlist").catch(() => ({ data: { data: { listings: [] } } })),
+                axiosInstance.get("/api/v1/users/get/profile").catch(() => ({ data: { data: null } })),
+                axiosInstance.get("/api/v1/wishlist").catch(() => ({ data: { data: { listings: [] } } })),
             ]);
 
             setUser(userResponse.data.data);
@@ -92,12 +93,12 @@ const Navbar = () => {
 
         try {
             setWishlist((prev) => prev.filter((item) => item._id !== listingId));
-            await axios.delete(`/api/v1/wishlist/${listingId}`);
+            await axiosInstance.delete(`/api/v1/wishlist/${listingId}`);
             toast.success("Removed from wishlist");
-            const refreshResponse = await axios.get("/api/v1/wishlist");
+            const refreshResponse = await axiosInstance.get("/api/v1/wishlist");
             setWishlist(refreshResponse.data.data.listings || []);
         } catch (error) {
-            const refreshResponse = await axios.get("/api/v1/wishlist");
+            const refreshResponse = await axiosInstance.get("/api/v1/wishlist");
             setWishlist(refreshResponse.data.data.listings || []);
             toast.error(error.response?.data?.message || "Failed to remove from wishlist");
         }

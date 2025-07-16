@@ -1,11 +1,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import axios from "axios";
+
 import { ClipLoader } from "react-spinners";
 import { useNavigate, Link } from "react-router-dom";
 import { HiMail, HiLockClosed } from "react-icons/hi";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import axiosInstance from "../../utils/axios.instance";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -30,7 +31,7 @@ const Login = () => {
         event.preventDefault();
         setLoading(true);
         try {
-            const response = await axios.post("/api/v1/users/login", formData);
+            const response = await axiosInstance.post("/api/v1/users/login", formData);
             toast.success(response.data.message);
             navigate("/login");
         } catch (error) {

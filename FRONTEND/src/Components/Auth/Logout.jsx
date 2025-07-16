@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
+import axiosInstance from "../../utils/axios.instance";
+
 
 const Logout = () => {
     const navigate = useNavigate();
@@ -9,7 +10,7 @@ const Logout = () => {
     useEffect(() => {
         const handleLogout = async () => {
             try {
-                const response = await axios.post(
+                const response = await axiosInstance.post(
                     "/api/v1/users/logout"
                 );
                 if (response) {
