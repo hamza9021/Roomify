@@ -9,7 +9,10 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "/auth/google/callback",
+            callbackURL:
+                process.env.NODE_ENV === "development"
+                    ? "https://roomify-44mj.onrender.com/auth/google/callback"
+                    : "http://localhost:8080/auth/google/callback",
             passReqToCallback: true,
         },
         async (req, accessToken, refreshToken, profile, done) => {
