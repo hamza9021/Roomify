@@ -783,7 +783,7 @@ const ListingDetail = () => {
                                 whileHover={{ scale: 1.05 }}
                                 src={listing.host.profileImage}
                                 alt={listing.host.name}
-                                className="w-14 h-14 rounded-full object-cover border-2 border-rose-500"
+                                className="w-14 h-14 rounded-full object-cover border-2"
                             />
                             <div className="flex-1">
                                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
