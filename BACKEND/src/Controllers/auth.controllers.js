@@ -28,34 +28,34 @@ const googleLogin = wrapperFunction(async (req, res) => {
                 joinedDate: new Date(),
                 roles: "User",
             });
-
-            const accessToken = user.generateAccessToken();
-            const refreshToken = user.generateRefreshToken();
-
-            user.refreshToken = refreshToken;
-            await user.save({ validateBeforeSave: false });
-
-            const cookieOptions = {
-                httpOnly: true,
-                secure: true,
-                // sameSite: process.env.NODE_ENV === "production" && "lax",
-                maxAge: 24 * 60 * 60 * 1000,
-
-                sameSite:
-                    process.env.NODE_ENV === "production" ? "none" : "lax",
-                //   priority: 'high',
-                // domain: ".onrender.com",
-                path: "/",
-            };
-
-            return res
-                .cookie("accessToken", accessToken, cookieOptions)
-                .cookie("refreshToken", refreshToken, cookieOptions)
-                .status(200)
-                .json(
-                    new ApiResponse(200, user, "User Logged In Successfully")
-                );
         }
+
+        
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+
+        user.refreshToken = refreshToken;
+        await user.save({ validateBeforeSave: false });
+
+        const cookieOptions = {
+            httpOnly: true,
+            secure: true,
+            // sameSite: process.env.NODE_ENV === "production" && "lax",
+            maxAge: 24 * 60 * 60 * 1000,
+
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            //   priority: 'high',
+            // domain: ".onrender.com",
+            path: "/",
+        };
+
+        return res
+            .cookie("accessToken", accessToken, cookieOptions)
+            .cookie("refreshToken", refreshToken, cookieOptions)
+            .status(200)
+            .json(new ApiResponse(200, user, "User Logged In Successfully"));
+
+
     } catch (error) {
         console.error("Google login error:", error);
         return res.status(500).json({
