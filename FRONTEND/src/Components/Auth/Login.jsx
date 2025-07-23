@@ -1,5 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useGoogleLogin } from "@react-oauth/google";
 
 import { ClipLoader } from "react-spinners";
 import { useNavigate, Link } from "react-router-dom";
@@ -31,7 +32,10 @@ const Login = () => {
         event.preventDefault();
         setLoading(true);
         try {
-            const response = await axiosInstance.post("/api/v1/users/login", formData);
+            const response = await axiosInstance.post(
+                "/api/v1/users/login",
+                formData
+            );
             toast.success(response.data.message);
             navigate("/");
         } catch (error) {
@@ -41,20 +45,47 @@ const Login = () => {
         }
     };
 
-    const handleOAuthGoogle = async () => {
+    // const handleOAuthGoogle = async () => {
+    //     try {
+    //         setGoogleLoading(true);
+    //         window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+    //     } catch (error) {
+    //         toast.error(error.response?.data?.message || "Google login failed");
+    //         setGoogleLoading(false);
+    //     }
+    // };
+
+    const responseGoogle = async (response) => {
         try {
             setGoogleLoading(true);
-            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/google`;
+            if (response.code) {
+                const result = await axiosInstance.get(
+                    `api/v1/auth/google?code=${response.code}`
+                );
+                console.log("Login Successful:", result);
+                console.log("Google Response:", response);
+
+            }
         } catch (error) {
-            toast.error(error.response?.data?.message || "Google login failed");
+            console.log("Login Failed: error:", error);
             setGoogleLoading(false);
         }
+        finally {
+            setGoogleLoading(false);
+            navigate("/");
+        }
     };
+
+    const handleOAuthGoogle = useGoogleLogin({
+        onSuccess: responseGoogle,
+        onError: responseGoogle,
+        flow: "auth-code",
+    });
 
     const handleOAuthGithub = async () => {
         try {
             setGithubLoading(true);
-            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/github`;
+            window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
         } catch (error) {
             toast.error(error.response?.data?.message || "GitHub login failed");
             setGithubLoading(false);

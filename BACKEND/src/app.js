@@ -5,8 +5,8 @@ const app = express();
 import passport from "passport";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import session from "express-session";
-import MongoStore from "connect-mongo";
+// import session from "express-session";
+// import MongoStore from "connect-mongo";
 import { userRouter } from "./Routes/user.routes.js";
 import { listingRouter } from "./Routes/listing.routes.js";
 import { reviewRouter } from "./Routes/review.routes.js";
@@ -14,7 +14,7 @@ import { messageRouter } from "./Routes/message.routes.js";
 import { authRouter } from "./Routes/auth.routes.js";
 import { wishListRouter } from "./Routes/wishlist.route.js";
 import { bookingRouter } from "./Routes/booking.routes.js";
-import "./Services/passport.js";
+// import "./Services/passport.js";
 
 
 
@@ -55,11 +55,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 app.use(cookieParser());
 app.use(express.static("./public"));
-app.use(passport.initialize());
+// app.use(passport.initialize());
 // app.use(passport.session());
 
 // Routes
-app.use("/auth", authRouter);
+app.use("/api/v1/auth",authRouter);
 
 app.get("/", (req, res) => {
     res.send(`<a href="/auth/google">Login with Google</a>`);
