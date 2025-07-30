@@ -82,8 +82,9 @@ const Home = () => {
     return (
         <>
             <Navbar />
-            <CategorySlider/>
+            
             <div className="container mx-auto px-4 mt-20">
+                <CategorySlider/>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 pb-8">
                     {listings.length > 0 ? (
                         listings.map((listing) => (
