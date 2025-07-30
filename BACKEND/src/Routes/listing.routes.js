@@ -8,6 +8,8 @@ import {
     getAllListings,
     getAllHostListings,
     searchListings,
+    searchListingsCategory,
+    getAllCategories
 } from "../Controllers/listing.controllers.js";
 import { verifyJWT } from "../Middlewares/auth.middleware.js";
 import { upload } from "../Middlewares/multer.js";
@@ -32,5 +34,8 @@ listingRouter.route("/search").get(searchListings);
 listingRouter.route("/:id").get(getListing);
 listingRouter.route("/").get(getAllListings);
 listingRouter.route("/host/listings").get(verifyJWT, getAllHostListings);
+
+listingRouter.route("/category").get(searchListingsCategory);
+listingRouter.route("/categories").get(getAllCategories);
 
 export { listingRouter };

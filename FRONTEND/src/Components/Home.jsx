@@ -6,6 +6,8 @@ import Navbar from "./shared/Navbar";
 import Footer from "./shared/Footer";
 import axiosInstance from "../utils/axios.instance";
 
+import CategorySlider from "../utils/CategorySlider";
+
 const Home = () => {
     const [listings, setListings] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +20,7 @@ const Home = () => {
         pricePerNight: searchParams.get("pricePerNight") || "",
         maxGuests: searchParams.get("maxGuests") || "",
         placeType: searchParams.get("placeType") || "",
+        category: searchParams.get("category") || "",
     });
 
     useEffect(() => {
@@ -28,10 +31,13 @@ const Home = () => {
                 const hasSearchParams = Object.values(params).some(
                     (val) => val !== ""
                 );
-
-                const endpoint = hasSearchParams
-                    ? "/api/v1/listings/search"
-                    : "/api/v1/listings";
+                
+                let endpoint = `/api/v1/listings`;
+                if(hasSearchParams){
+                    endpoint = `${endpoint}/search`;
+                }else if(searchParams.get(`category`)){
+                    endpoint = `/api/v1/listings/category`;
+                }
                 const { data } = await axiosInstance.get(endpoint, { params });
 
                 if (!data?.data) {
@@ -76,6 +82,7 @@ const Home = () => {
     return (
         <>
             <Navbar />
+            <CategorySlider/>
             <div className="container mx-auto px-4 mt-20">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 pb-8">
                     {listings.length > 0 ? (

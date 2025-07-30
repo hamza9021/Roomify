@@ -59,7 +59,7 @@ const listingSchema = new mongoose.Schema(
         bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
         isVerified: Boolean,
         tags: [String],
-        catogeroy: {
+        category: {
             type: String,
             enum: [
                 "Apartment",

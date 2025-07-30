@@ -22,7 +22,7 @@ const createListing = wrapperFunction(async (req, res) => {
         amenities,
         unavailableDates,
         tags,
-        catogeroy,
+        category,
     } = req.body;
 
     const photos = req.files?.photos || [];
@@ -86,7 +86,7 @@ const createListing = wrapperFunction(async (req, res) => {
         amenities,
         unavailableDates,
         tags,
-        catogeroy,
+        category,
         photos: photoUrls,
     });
 
@@ -315,16 +315,25 @@ const searchListings = wrapperFunction(async (req, res) => {
 
     // Location filters
     if (query.address) {
-        searchCriteria['location.address'] = { $regex: query.address, $options: "i" };
+        searchCriteria["location.address"] = {
+            $regex: query.address,
+            $options: "i",
+        };
     }
     if (query.city) {
-        searchCriteria['location.city'] = { $regex: query.city, $options: "i" };
+        searchCriteria["location.city"] = { $regex: query.city, $options: "i" };
     }
     if (query.state) {
-        searchCriteria['location.state'] = { $regex: query.state, $options: "i" };
+        searchCriteria["location.state"] = {
+            $regex: query.state,
+            $options: "i",
+        };
     }
     if (query.country) {
-        searchCriteria['location.country'] = { $regex: query.country, $options: "i" };
+        searchCriteria["location.country"] = {
+            $regex: query.country,
+            $options: "i",
+        };
     }
 
     // Price filter
@@ -339,6 +348,11 @@ const searchListings = wrapperFunction(async (req, res) => {
         searchCriteria.maxGuests = { $gte: parseInt(query.maxGuests) };
     }
 
+    // Category filter
+    if (query.category) {
+        searchCriteria.category = query.category;
+    }
+
     console.log("Search criteria:", searchCriteria);
     const listings = await Listing.find(searchCriteria);
 
@@ -351,6 +365,71 @@ const searchListings = wrapperFunction(async (req, res) => {
         .json(new ApiResponse(200, listings, "Listings found"));
 });
 
+const searchListingsCategory = wrapperFunction(async (req, res) => {
+    const { category } = req.query;
+    
+    if (!category) {
+        throw new ApiError(400, "Category parameter is required");
+    }
+
+    // Validate category exists in the enum
+    const validCategories = [
+        "Apartment", "House", "Hotel", "Hostel", "Resort", "Villa", "A-frame",
+        "Adapted", "Amazing pools", "Amazing views", "Arctic", "Barn", "Beach",
+        "Beachfront", "Bed & breakfast", "Boat", "Cabin", "Camper", "Camping",
+        "Casas particulares", "Castle", "Cave", "Chef's kitchen", "Container",
+        "Countryside", "Creative space", "Cycladic home", "Dammuso", "Desert",
+        "Design", "Dome", "Earth home", "Farm", "Fun for kids", "Golfing",
+        "Grand piano", "Hanok", "Historical home", "Houseboat", "Iconic city",
+        "Icon", "Island", "Kezhan", "Lake", "Lakefront", "Luxe", "Mansion",
+        "Minsu", "National park", "Off-the-grid", "OMG!", "Riad", "Ryokan",
+        "Shared home", "Shepherd's hut", "Ski-in/out", "Skiing", "Surfing",
+        "Tiny home", "Tower", "Treehouse", "Tropical", "Trullo", "Vineyard",
+        "Windmill", "Yurt"
+    ];
+
+    if (!validCategories.includes(category)) {
+        throw new ApiError(400, `Invalid category. Must be one of: ${validCategories.join(", ")}`);
+    }
+
+    console.log("Searching for category:", category);
+    
+    const listings = await Listing.find({ category: category })
+        .populate("host", "name email profileImage")
+        .sort({ createdAt: -1 });
+
+    if (!listings || listings.length === 0) {
+        return res
+            .status(200)
+            .json(new ApiResponse(200, [], `No listings found for category: ${category}`));
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, listings, `Found ${listings.length} listings for category: ${category}`));
+});
+
+const getAllCategories = wrapperFunction(async (req, res) => {
+    const categories = [
+        "Apartment", "House", "Hotel", "Hostel", "Resort", "Villa", "A-frame",
+        "Adapted", "Amazing pools", "Amazing views", "Arctic", "Barn", "Beach",
+        "Beachfront", "Bed & breakfast", "Boat", "Cabin", "Camper", "Camping",
+        "Casas particulares", "Castle", "Cave", "Chef's kitchen", "Container",
+        "Countryside", "Creative space", "Cycladic home", "Dammuso", "Desert",
+        "Design", "Dome", "Earth home", "Farm", "Fun for kids", "Golfing",
+        "Grand piano", "Hanok", "Historical home", "Houseboat", "Iconic city",
+        "Icon", "Island", "Kezhan", "Lake", "Lakefront", "Luxe", "Mansion",
+        "Minsu", "National park", "Off-the-grid", "OMG!", "Riad", "Ryokan",
+        "Shared home", "Shepherd's hut", "Ski-in/out", "Skiing", "Surfing",
+        "Tiny home", "Tower", "Treehouse", "Tropical", "Trullo", "Vineyard",
+        "Windmill", "Yurt"
+    ];
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, categories, "Categories retrieved successfully"));
+});
+
 export {
     createListing,
     deleteListing,
@@ -359,4 +438,6 @@ export {
     getAllListings,
     getAllHostListings,
     searchListings,
+    searchListingsCategory,
+    getAllCategories,
 };
