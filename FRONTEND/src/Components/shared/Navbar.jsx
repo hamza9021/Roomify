@@ -158,51 +158,73 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="fixed top-0 left-0 right-0 h-16 bg-white shadow-sm z-50 border-b border-gray-100">
+        <motion.nav 
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            className="fixed top-0 left-0 right-0 h-20 glass backdrop-blur-xl z-50 border-b border-white/20"
+        >
             <div className="container mx-auto px-4 h-full flex items-center justify-between">
                 {/* Logo with animation */}
                 <Link
                     to="/"
-                    className="flex items-center text-rose-500 hover:text-rose-600 transition transform hover:scale-105"
+                    className="flex items-center group"
                 >
-                    <motion.div whileHover={{ rotate: -10 }}>
-                        <FaAirbnb className="text-2xl sm:text-3xl" />
+                    <motion.div 
+                        whileHover={{ rotate: -10, scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="relative"
+                    >
+                        <FaAirbnb className="text-3xl sm:text-4xl text-primary-500 group-hover:text-primary-600 transition-colors duration-300" />
+                        <motion.div
+                            className="absolute inset-0 bg-primary-500/20 rounded-full blur-xl"
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                        />
                     </motion.div>
-                    <span className="text-xl font-bold hidden sm:inline ml-1">
+                    <motion.span 
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="font-display text-2xl font-bold gradient-text hidden sm:inline ml-3"
+                    >
                         Roomify
-                    </span>
+                    </motion.span>
                 </Link>
 
                 {/* Search Bar - Medium screens and up */}
                 <motion.div
-                    whileHover={{ scale: 1.01 }}
+                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="hidden md:flex items-center justify-between border border-gray-200 rounded-full py-1 px-3 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer mx-4 flex-1 max-w-[450px]"
+                    className="hidden md:flex items-center justify-between card rounded-full py-2 px-4 shadow-soft hover:shadow-medium cursor-pointer mx-4 flex-1 max-w-[500px] group"
                     onClick={() => setSearchDropdownOpen(!searchDropdownOpen)}
                 >
-                    <div className="font-medium px-2 text-sm truncate">
+                    <div className="font-medium px-3 text-sm truncate text-secondary-700 group-hover:text-secondary-900 transition-colors">
                         {searchParams.address ||
                             searchParams.city ||
                             "Anywhere"}
                     </div>
-                    <span className="border-l h-4 border-gray-200"></span>
-                    <div className="font-medium px-2 text-sm">Any week</div>
-                    <span className="border-l h-4 border-gray-200"></span>
-                    <div className="text-gray-500 px-2 text-sm">
+                    <span className="border-l h-5 border-secondary-200"></span>
+                    <div className="font-medium px-3 text-sm text-secondary-700 group-hover:text-secondary-900 transition-colors">Any week</div>
+                    <span className="border-l h-5 border-secondary-200"></span>
+                    <div className="text-secondary-500 px-3 text-sm group-hover:text-secondary-700 transition-colors">
                         {searchParams.maxGuests
                             ? `${searchParams.maxGuests} guests`
                             : "Add guests"}
                     </div>
-                    <button className="bg-rose-500 p-2 rounded-full text-white hover:bg-rose-600 transition ml-2">
-                        <FaSearch className="text-xs" />
-                    </button>
+                    <motion.button 
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="bg-gradient-to-r from-primary-500 to-primary-600 p-3 rounded-full text-white hover:from-primary-600 hover:to-primary-700 transition-all duration-300 ml-2 shadow-soft glow-effect"
+                    >
+                        <FaSearch className="text-sm" />
+                    </motion.button>
                 </motion.div>
 
                 {/* Mobile Search Button */}
                 <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="md:hidden flex items-center justify-center p-2 rounded-full bg-rose-500 text-white shadow-md"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="md:hidden flex items-center justify-center p-3 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-soft glow-effect"
                     onClick={() => setSearchDropdownOpen(!searchDropdownOpen)}
                     aria-label="Search"
                 >
@@ -210,22 +232,42 @@ const Navbar = () => {
                 </motion.button>
 
                 {/* User Menu */}
-                <div className="flex items-center space-x-2 ml-2">
-                    {/* Mobile Host Button */}
-                    <Link
-                        to="/host"
-                        className="md:hidden flex items-center justify-center p-2 rounded-full hover:bg-gray-100 transition"
-                        aria-label="Become a Host"
+                <div className="flex items-center space-x-3 ml-4">
+                    {/* Desktop Host Button */}
+                    <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="hidden md:block"
                     >
-                        <FaPlus className="text-gray-600" />
-                    </Link>
+                        <Link
+                            to="/create/listing"
+                            className="btn-ghost text-sm font-medium"
+                        >
+                            Roomify your home
+                        </Link>
+                    </motion.div>
+
+                    {/* Mobile Host Button */}
+                    <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="md:hidden"
+                    >
+                        <Link
+                            to="/create/listing"
+                            className="flex items-center justify-center p-3 rounded-full glass hover:bg-white/20 transition-all duration-300"
+                            aria-label="Become a Host"
+                        >
+                            <FaPlus className="text-secondary-600" />
+                        </Link>
+                    </motion.div>
 
                     {/* Wishlist Dropdown */}
                     <div className="relative" ref={wishlistDropdownRef}>
                         <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="p-2 hover:bg-gray-100 rounded-full transition relative"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-3 glass hover:bg-white/20 rounded-full transition-all duration-300 relative group"
                             onClick={() => {
                                 setWishlistDropdownOpen(!wishlistDropdownOpen);
                                 setUserDropdownOpen(false);
@@ -233,12 +275,13 @@ const Navbar = () => {
                             }}
                             aria-label="Wishlist"
                         >
-                            <FaHeart className="text-lg text-gray-600" />
+                            <FaHeart className="text-lg text-secondary-600 group-hover:text-primary-500 transition-colors duration-300" />
                             {wishlist.length > 0 && (
                                 <motion.span
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
-                                    className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center"
+                                    whileHover={{ scale: 1.1 }}
+                                    className="absolute -top-1 -right-1 bg-gradient-to-r from-primary-500 to-primary-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium shadow-soft"
                                 >
                                     {wishlist.length}
                                 </motion.span>
@@ -252,19 +295,23 @@ const Navbar = () => {
                                     animate="visible"
                                     exit="exit"
                                     variants={dropdownVariants}
-                                    transition={{ duration: 0.2 }}
-                                    className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100 max-h-96 overflow-y-auto"
+                                    transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
+                                    className="absolute right-0 mt-4 w-80 card shadow-large py-3 z-50 max-h-96 overflow-y-auto scrollbar-hide"
                                 >
-                                    <div className="px-4 py-2 font-medium border-b border-gray-100 flex justify-between items-center">
-                                        <span>Your Wishlist</span>
+                                    <div className="px-6 py-3 font-display font-semibold border-b border-secondary-100 flex justify-between items-center">
+                                        <span className="text-secondary-900">Your Wishlist</span>
                                         {wishlist.length > 0 &&
                                             !loading.wishlist && (
-                                                <span className="text-xs text-gray-500">
+                                                <motion.span 
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    className="text-xs text-secondary-500 bg-secondary-100 px-2 py-1 rounded-full font-medium"
+                                                >
                                                     {wishlist.length}{" "}
                                                     {wishlist.length === 1
                                                         ? "item"
                                                         : "items"}
-                                                </span>
+                                                </motion.span>
                                             )}
                                     </div>
 
@@ -668,7 +715,7 @@ const Navbar = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </nav>
+        </motion.nav> 
     );
 };
 

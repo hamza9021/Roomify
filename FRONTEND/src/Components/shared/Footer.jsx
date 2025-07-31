@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
     FaAirbnb,
     FaFacebook,
@@ -65,138 +66,256 @@ const Footer = () => {
         { name: "LinkedIn", icon: FaLinkedin, url: "https://linkedin.com", color: "hover:text-blue-700" },
     ];
 
+    // Animation variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.2,
+            },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { 
+            opacity: 1, 
+            y: 0,
+            transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 15,
+            },
+        },
+    };
+
     return (
-        <footer className="bg-gray-50 border-t border-gray-200 mt-16">
+        <footer className="bg-gradient-to-br from-secondary-50 via-white to-primary-50 border-t border-secondary-200/50 mt-20">
             {/* Main Footer Content */}
-            <div className="container mx-auto px-4 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                className="container mx-auto px-4 py-16"
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                     {footerSections.map((section, index) => (
-                        <div key={index} className="space-y-4">
-                            <h3 className="font-semibold text-gray-900 text-lg">
+                        <motion.div 
+                            key={index} 
+                            variants={itemVariants}
+                            className="space-y-6"
+                        >
+                            <h3 className="font-display font-bold text-secondary-900 text-xl">
                                 {section.title}
                             </h3>
-                            <ul className="space-y-3">
+                            <ul className="space-y-4">
                                 {section.links.map((link, linkIndex) => (
-                                    <li key={linkIndex}>
+                                    <motion.li 
+                                        key={linkIndex}
+                                        whileHover={{ x: 5 }}
+                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                    >
                                         <Link
                                             to={link.to}
-                                            className="flex items-center text-gray-600 hover:text-rose-500 transition duration-200 text-sm"
+                                            className="flex items-center text-secondary-600 hover:text-primary-500 transition-all duration-300 text-sm group"
                                         >
-                                            <link.icon className="mr-2 text-xs" />
-                                            {link.name}
+                                            <motion.div
+                                                whileHover={{ scale: 1.2, rotate: 5 }}
+                                                className="mr-3"
+                                            >
+                                                <link.icon className="text-sm group-hover:text-primary-500 transition-colors duration-300" />
+                                            </motion.div>
+                                            <span className="group-hover:font-medium transition-all duration-300">
+                                                {link.name}
+                                            </span>
                                         </Link>
-                                    </li>
+                                    </motion.li>
                                 ))}
                             </ul>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
 
                 {/* Mobile App Section */}
-                <div className="mt-12 pt-8 border-t border-gray-200">
-                    <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-                        <div className="flex items-center space-x-4">
-                            <FaMobile className="text-2xl text-gray-600" />
+                <motion.div 
+                    variants={itemVariants}
+                    className="mt-16 pt-12 border-t border-secondary-200/50"
+                >
+                    <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+                        <div className="flex items-center space-x-6">
+                            <motion.div
+                                animate={{ y: [0, -5, 0] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="p-4 bg-gradient-to-br from-primary-100 to-accent-100 rounded-2xl"
+                            >
+                                <FaMobile className="text-3xl text-primary-600" />
+                            </motion.div>
                             <div>
-                                <h4 className="font-medium text-gray-900">Get the Roomify App</h4>
-                                <p className="text-sm text-gray-600">Book your next stay on the go</p>
+                                <h4 className="font-display font-bold text-secondary-900 text-xl">Get the Roomify App</h4>
+                                <p className="text-secondary-600">Book your next stay on the go</p>
                             </div>
                         </div>
-                        <div className="flex space-x-3">
-                            <button className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-200 text-sm">
+                        <div className="flex space-x-4">
+                            <motion.button 
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="btn-secondary text-sm font-medium"
+                            >
                                 App Store
-                            </button>
-                            <button className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-200 text-sm">
+                            </motion.button>
+                            <motion.button 
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="btn-secondary text-sm font-medium"
+                            >
                                 Google Play
-                            </button>
+                            </motion.button>
                         </div>
                     </div>
-                </div>
+                </motion.div>
+            </motion.div>
+
+            {/* Newsletter Subscription */}
+            <div className="bg-gradient-to-r from-primary-500 via-primary-600 to-accent-500 relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/10"></div>
+                <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8 }}
+                    className="container mx-auto px-4 py-16 relative z-10"
+                >
+                    <div className="max-w-2xl mx-auto text-center">
+                        <motion.h3 
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.2 }}
+                            className="font-display text-3xl font-bold text-white mb-4"
+                        >
+                            Stay Updated
+                        </motion.h3>
+                        <motion.p 
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.3 }}
+                            className="text-white/90 text-lg mb-8"
+                        >
+                            Get the latest news about new features, travel inspiration, and special offers.
+                        </motion.p>
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.4 }}
+                            className="flex max-w-md mx-auto"
+                        >
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                className="flex-1 px-6 py-4 border-0 rounded-l-2xl focus:outline-none focus:ring-4 focus:ring-white/30 text-secondary-900 placeholder-secondary-500"
+                            />
+                            <motion.button 
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="bg-white text-primary-600 px-8 py-4 rounded-r-2xl hover:bg-secondary-50 transition-all duration-300 font-semibold shadow-soft"
+                            >
+                                Subscribe
+                            </motion.button>
+                        </motion.div>
+                        <motion.p 
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.5 }}
+                            className="text-xs text-white/70 mt-4"
+                        >
+                            By subscribing, you agree to our Privacy Policy and Terms of Service.
+                        </motion.p>
+                    </div>
+                </motion.div>
             </div>
 
             {/* Bottom Footer */}
-            <div className="bg-white border-t border-gray-200">
-                <div className="container mx-auto px-4 py-6">
-                    <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+            <div className="bg-secondary-900 text-white">
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    className="container mx-auto px-4 py-8"
+                >
+                    <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
                         {/* Logo and Copyright */}
-                        <div className="flex items-center space-x-4">
-                            <Link to="/" className="flex items-center text-rose-500 hover:text-rose-600 transition">
-                                <FaAirbnb className="text-2xl mr-2" />
-                                <span className="text-lg font-bold">Roomify</span>
+                        <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
+                            <Link to="/" className="flex items-center group">
+                                <motion.div
+                                    whileHover={{ rotate: -10, scale: 1.1 }}
+                                    className="relative"
+                                >
+                                    <FaAirbnb className="text-3xl text-primary-400 group-hover:text-primary-300 transition-colors duration-300" />
+                                    <motion.div
+                                        className="absolute inset-0 bg-primary-400/20 rounded-full blur-xl"
+                                        animate={{ scale: [1, 1.2, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                    />
+                                </motion.div>
+                                <span className="font-display text-2xl font-bold gradient-text ml-3">Roomify</span>
                             </Link>
-                            <span className="hidden md:inline text-gray-400">|</span>
-                            <p className="text-sm text-gray-600">
+                            <span className="hidden md:inline text-secondary-400">|</span>
+                            <p className="text-sm text-secondary-300">
                                 © {currentYear} Roomify, Inc. All rights reserved
                             </p>
                         </div>
 
                         {/* Links and Social */}
-                        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8">
                             {/* Legal Links */}
-                            <div className="flex items-center space-x-4 text-sm">
-                                <button className="flex items-center text-gray-600 hover:text-gray-900 transition">
-                                    <FaGlobe className="mr-1" />
+                            <div className="flex items-center space-x-6 text-sm">
+                                <motion.button 
+                                    whileHover={{ scale: 1.05 }}
+                                    className="flex items-center text-secondary-300 hover:text-white transition-colors duration-300"
+                                >
+                                    <FaGlobe className="mr-2" />
                                     English (US)
-                                </button>
-                                <span className="text-gray-300">·</span>
-                                <Link to="/privacy" className="text-gray-600 hover:text-rose-500 transition">
+                                </motion.button>
+                                <span className="text-secondary-600">·</span>
+                                <Link to="/privacy" className="text-secondary-300 hover:text-primary-400 transition-colors duration-300">
                                     Privacy
                                 </Link>
-                                <span className="text-gray-300">·</span>
-                                <Link to="/terms" className="text-gray-600 hover:text-rose-500 transition">
+                                <span className="text-secondary-600">·</span>
+                                <Link to="/terms" className="text-secondary-300 hover:text-primary-400 transition-colors duration-300">
                                     Terms
                                 </Link>
-                                <span className="text-gray-300">·</span>
-                                <Link to="/sitemap" className="text-gray-600 hover:text-rose-500 transition">
+                                <span className="text-secondary-600">·</span>
+                                <Link to="/sitemap" className="text-secondary-300 hover:text-primary-400 transition-colors duration-300">
                                     Sitemap
                                 </Link>
                             </div>
 
                             {/* Social Media */}
-                            <div className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-4">
                                 {socialLinks.map((social, index) => (
-                                    <a
+                                    <motion.a
                                         key={index}
                                         href={social.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className={`p-2 text-gray-600 ${social.color} transition duration-200 hover:bg-gray-100 rounded-full`}
+                                        whileHover={{ scale: 1.2, y: -2 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        className="p-3 text-secondary-400 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-full"
                                         aria-label={social.name}
                                     >
                                         <social.icon className="text-lg" />
-                                    </a>
+                                    </motion.a>
                                 ))}
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            {/* Newsletter Subscription */}
-            <div className="bg-gray-100 border-t border-gray-200">
-                <div className="container mx-auto px-4 py-8">
-                    <div className="max-w-2xl mx-auto text-center">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                            Stay Updated
-                        </h3>
-                        <p className="text-gray-600 mb-6">
-                            Get the latest news about new features, travel inspiration, and special offers.
-                        </p>
-                        <div className="flex max-w-md mx-auto">
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                            />
-                            <button className="bg-rose-500 text-white px-6 py-3 rounded-r-lg hover:bg-rose-600 transition duration-200 font-medium">
-                                Subscribe
-                            </button>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-3">
-                            By subscribing, you agree to our Privacy Policy and Terms of Service.
-                        </p>
-                    </div>
-                </div>
+                </motion.div>
             </div>
         </footer>
     );

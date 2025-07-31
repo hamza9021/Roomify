@@ -393,9 +393,31 @@ const ListingDetail = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center min-h-screen">
-                <ClipLoader color="#FF5A5F" size={50} />
-            </div>
+            <>
+                <Navbar />
+                <div className="min-h-screen flex justify-center items-center">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-center"
+                    >
+                        <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            className="w-16 h-16 border-4 border-primary-200 border-t-primary-500 rounded-full mx-auto mb-4"
+                        />
+                        <motion.p
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-secondary-600 font-medium"
+                        >
+                            Loading amazing place details...
+                        </motion.p>
+                    </motion.div>
+                </div>
+                <Footer />
+            </>
         );
     }
 

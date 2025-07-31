@@ -1,3 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    @apply antialiased text-secondary-800 bg-gradient-to-br from-secondary-50 to-primary-50;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', system-ui, sans-serif;
+    @apply font-semibold;
+  }
+  
+  * {
+    @apply border-secondary-200;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-secondary-100;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-secondary-300 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-secondary-400;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium py-3 px-6 rounded-xl shadow-soft hover:shadow-medium transition-all duration-300 transform hover:scale-105 active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-secondary-50 text-secondary-700 font-medium py-3 px-6 rounded-xl border border-secondary-200 shadow-soft hover:shadow-medium transition-all duration-300 transform hover:scale-105 active:scale-95;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent hover:bg-secondary-100 text-secondary-600 hover:text-secondary-800 font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95;
+  }
+  
+  .card {
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft hover:shadow-medium border border-white/20 transition-all duration-300;
+  }
+  
+  .card-hover {
+    @apply hover:transform hover:scale-105 hover:-translate-y-2 transition-all duration-300;
+  }
+  
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent;
+  }
+  
+  .shimmer-bg {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+  
+  .floating-element {
+    @apply animate-float;
+  }
+  
+  .glow-effect {
+    @apply shadow-glow hover:shadow-glow-lg transition-shadow duration-300;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
