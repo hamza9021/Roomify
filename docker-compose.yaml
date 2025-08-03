@@ -1,0 +1,53 @@
+name: mern-app
+
+services:
+
+  api:
+    build:
+      context: ./BACKEND
+      dockerfile: Dockerfile
+    restart: always
+    env_file: ./BACKEND/.env
+    volumes:
+      - ./BACKEND:/app
+      - /app/node_modules
+    ports:
+      - 8080:8080
+    networks:
+      - mern-app
+    depends_on:
+        - mongo
+
+  mongo:
+    image: mongo
+    # ports:
+    #   - 27017:27017      -----WE DONOT NEED THIS BECAUSE WE ARE USING DOCKER NETWORKS INSTEAD OF EXPOSED PORTS
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - mern-app
+  
+  client:
+    build:
+      context: ./FRONTEND
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./FRONTEND:/app
+      - /app/node_modules
+    ports:
+      - 5173:5173
+    networks:
+      - mern-app
+    command: npm run dev -- --host
+    depends_on:
+        - api
+
+
+volumes:
+  mongo-data:
+
+networks:
+  mern-app:
+    driver: bridge
