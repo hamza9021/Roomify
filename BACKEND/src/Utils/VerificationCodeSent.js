@@ -21,7 +21,7 @@ const sendVerificationCode = async (email, otp) => {
                 .header {
                     text-align: center;
                     padding: 20px 0;
-                    background-color: #4a6fa5;
+                    background-color: #E04E54;
                     color: white;
                     border-radius: 8px 8px 0 0;
                 }
