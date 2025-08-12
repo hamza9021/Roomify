@@ -7,6 +7,7 @@ import {
     updateUserProfile,
     updatePassword,
     updateprofileImage,
+    verifyEmail
 } from "../Controllers/user.controllers.js";
 import { upload } from "../Middlewares/multer.js";
 import { verifyJWT } from "../Middlewares/auth.middleware.js";
@@ -15,6 +16,7 @@ const userRouter = Router();
 userRouter
     .route("/register")
     .post(upload.fields([{ name: "profileImage", maxCount: 1 }]), registerUser);
+    userRouter.route("/verify/email").post(verifyEmail);
 
     userRouter.route("/login").post(loginUser);
     userRouter.route("/logout").post(verifyJWT, logoutUser);

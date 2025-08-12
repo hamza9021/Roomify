@@ -11,6 +11,7 @@ import {
     MyListing,
     UpdateListing,
     MyTrip,
+    VerifyEmail
 } from "./Components";
 import { Toaster } from "react-hot-toast";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -30,6 +31,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/verify/email" element={<VerifyEmail />} />
                         <Route path="/login" element={<GoogleAuthWrapper />} />
                         <Route path="/logout" element={<Logout />} />
                         <Route path="/u/update" element={<UpdateUser />} />

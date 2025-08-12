@@ -39,7 +39,8 @@ const userSchema = new mongoose.Schema(
                 isDefault: { type: Boolean },
             },
         ],
-        isVerified: { type: Boolean },
+        isVerified: { type: Boolean , default: false },
+        otp: { type: String },
         verificationDocuments: [{ type: String }],
         roles: {
             type: String,

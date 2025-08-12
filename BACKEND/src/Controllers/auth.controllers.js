@@ -25,6 +25,7 @@ const googleLogin = wrapperFunction(async (req, res) => {
                 name,
                 email,
                 profileImage: picture,
+                isVerified: true,
                 joinedDate: new Date(),
                 roles: "User",
             });

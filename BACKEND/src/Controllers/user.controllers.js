@@ -4,6 +4,7 @@ import { uploadOnCloudinary } from "../Services/cloudinary.js";
 import { ApiResponse } from "../Utils/ApiResponse.js";
 import { User } from "../Models/user.models.js";
 import { generateAccessAndRefreshToken } from "../Utils/generateAccessAndRefreshToken.js";
+import { sendVerificationCode } from "../Utils/VerificationCodeSent.js";
 
 const registerUser = wrapperFunction(async (req, res) => {
     const { name, email, password, phoneNumber, roles } = req.body;
@@ -29,12 +30,17 @@ const registerUser = wrapperFunction(async (req, res) => {
         throw new ApiError(400, "Profile Image is not uploaded on cloud");
     }
 
+    const otp = Math.floor(1000000 + Math.random() * 9000000).toString();
+
+    sendVerificationCode(email, otp);
+
     const user = await User.create({
         name,
         email,
         password,
         phoneNumber,
         roles,
+        otp,
         joinedDate: new Date(),
         profileImage: profileImage.url,
     });
@@ -49,6 +55,36 @@ const registerUser = wrapperFunction(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, createdUser, "User Created Successfully"));
 });
+
+
+const verifyEmail = wrapperFunction(async (req, res) => {
+    const { otp } = req.body;
+    console.log(otp);
+    if (!otp) {
+        throw new ApiError(400, "OTP is required");
+    }
+
+    const user = await User.findOne({ otp }).select('-password');
+    if (!user) {
+        throw new ApiError(404, 'User Not Found')
+    }
+
+    if (user.otp != otp) {
+        throw new ApiError(403, 'Invalid OTP')
+    }
+
+    if (user.isVerified) {
+        throw new ApiError(400, 'Email already verified')
+    }
+
+    user.isVerified = true;
+    user.otp = null;
+
+    await user.save();
+
+    return res.status(200).json(new ApiResponse(200, { message: 'Email Verified' }));
+}
+);
 
 const loginUser = wrapperFunction(async (req, res) => {
     const { email, password } = req.body;
@@ -66,6 +102,12 @@ const loginUser = wrapperFunction(async (req, res) => {
         throw new ApiError(401, "Incorrect Password");
     }
 
+    if (user.isVerified === false) {
+        await sendVerificationCode(user.email, user.otp);
+        throw new ApiError(403, 'Email is not verified');
+    }
+
+
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
         user._id
     );
@@ -77,10 +119,10 @@ const loginUser = wrapperFunction(async (req, res) => {
         httpOnly: true,
         secure: true,
         // sameSite: process.env.NODE_ENV === "production" && "lax",
-        maxAge: 24 * 60 * 60 * 1000, 
-        
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-//   priority: 'high',
+        maxAge: 24 * 60 * 60 * 1000,
+
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        //   priority: 'high',
         // domain: ".onrender.com", 
         path: "/",
     };
@@ -100,12 +142,12 @@ const logoutUser = wrapperFunction(async (req, res) => {
     );
 
     // const cookieOptions = { httpOnly: true, secure: true };
-      const cookieOptions = {
+    const cookieOptions = {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
-        
+
     };
 
     res.status(200)
@@ -227,4 +269,5 @@ export {
     updateUserProfile,
     updatePassword,
     updateprofileImage,
+    verifyEmail
 };

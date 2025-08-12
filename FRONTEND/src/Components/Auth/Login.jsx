@@ -39,6 +39,11 @@ const Login = () => {
             toast.success(response.data.message);
             navigate("/");
         } catch (error) {
+            if(error.response.status === 403){
+                toast.error('Please verify your email address before logging in.');
+                navigate("/verify/email");
+                return;
+            }
             toast.error(error.response?.data?.message || "Login failed");
         } finally {
             setLoading(false);

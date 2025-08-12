@@ -78,7 +78,7 @@ const Register = () => {
                 withCredentials: true,
             });
             toast.success(`${response.data.message}`);
-            navigate("/login");
+            navigate("/verify/email");
         } catch (error) {
             toast.error(error.message);
         }
