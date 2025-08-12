@@ -11,3 +11,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export { transporter };
+
+
+
+//---------------------------FOR GETTING AUTH_PASSWORD 1. GO TO GOOGLE ACCOUNT MANANGER 2. SEARCH APP PASSWORDS THERE 4. SETUP APP NAME 5. IT WILL GENERATE A CODE FOR YOU TO USE AS YOUR AUTH_PASSWORD------------------------
