@@ -39,7 +39,7 @@ const sendVerificationCode = async (email, otp) => {
                     padding: 15px 25px;
                     font-size: 24px;
                     font-weight: bold;
-                    background-color: #4a6fa5;
+                    background-color: #E04E54;
                     color: white;
                     border-radius: 5px;
                     letter-spacing: 3px;
@@ -53,7 +53,7 @@ const sendVerificationCode = async (email, otp) => {
                 .button {
                     display: inline-block;
                     padding: 10px 20px;
-                    background-color: #4a6fa5;
+                    background-color: #FF5A5F;
                     color: white;
                     text-decoration: none;
                     border-radius: 5px;
