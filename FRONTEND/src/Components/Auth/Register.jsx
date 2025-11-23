@@ -95,15 +95,6 @@ const Register = () => {
         }
     };
 
-    const handleOAuthGithub = async () => {
-        try {
-            setGithubLoading(true);
-            window.location.href = `${ import.meta.env.VITE_API_URL}/auth/github`;
-        } catch (error) {
-            toast.error(error.response?.data?.message || "GitHub login failed");
-            setGithubLoading(false);
-        }
-    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
@@ -135,22 +126,6 @@ const Register = () => {
                         )}
                     </button>
 
-                    <button
-                        onClick={handleOAuthGithub}
-                        disabled={githubLoading}
-                        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF5A5F]/50 transition-all"
-                    >
-                        {githubLoading ? (
-                            <ClipLoader color="#333" size={20} />
-                        ) : (
-                            <>
-                                <FaGithub className="w-5 h-5 text-gray-800" />
-                                <span className="text-gray-700 font-medium">
-                                    Continue with GitHub
-                                </span>
-                            </>
-                        )}
-                    </button>
                 </div>
 
                 <div className="flex items-center mb-6">
